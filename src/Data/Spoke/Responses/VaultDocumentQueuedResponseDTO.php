@@ -1,0 +1,26 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Sunnyface\Contracts\Data\Spoke\Responses;
+
+use Illuminate\Http\JsonResponse;
+use Spatie\LaravelData\Data;
+use Sunnyface\Contracts\Enums\DocumentStatus;
+
+/**
+ * Respuesta canónica tras encolar un documento de bóveda desde el Spoke (upload o reindex).
+ */
+final class VaultDocumentQueuedResponseDTO extends Data
+{
+    public function __construct(
+        public readonly DocumentStatus $status,
+        public readonly string $document_id,
+        public readonly ?string $task_id,
+    ) {}
+
+    public function toResponse($request): JsonResponse
+    {
+        return response()->json($this, 202);
+    }
+}
