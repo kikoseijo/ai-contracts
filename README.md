@@ -5,6 +5,7 @@
 This package provides a Laravel library for shared Data Transfer Objects (DTOs) and contracts between Hub and Spoke services. It enables seamless communication and data sharing in distributed systems, ensuring consistency and maintainability across service boundaries.
 
 ## Features
+
 - **Shared DTOs**: Define and share data structures across services to ensure alignment on data contracts.
 - **Robust Contract Management**: Utilize contracts to validate and enforce data integrity when communicating between services.
 
@@ -13,7 +14,7 @@ This package provides a Laravel library for shared Data Transfer Objects (DTOs) 
 You can install this package via Composer. Run the following command:
 
 ```bash
-composer require kikoseijo/ai-contracts
+composer require sunnyface/ai-contracts
 ```
 
 ## Usage
