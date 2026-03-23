@@ -14,7 +14,7 @@ This package provides a Laravel library for shared Data Transfer Objects (DTOs) 
 You can install this package via Composer. Run the following command:
 
 ```bash
-composer require sunnyface/ai-contracts
+composer require sunnyface/ai-contracts:dev-main --with-all-dependencies
 ```
 
 ## Usage
