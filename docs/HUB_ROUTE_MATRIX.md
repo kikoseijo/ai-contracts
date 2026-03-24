@@ -1,0 +1,95 @@
+# Matriz Hub → rutas compartidas con Spoke / S2S
+
+**Estado:** inventario de `routes/api.php` (Hub). Los DTOs viven en `sunnyface/ai-contracts` salvo indicación (`App\Data\...`).
+
+**Convenciones:** muchos endpoints devuelven `ApiErrorResponseDTO` en 404/422 además del DTO de éxito indicado. El **404 por tenant inexistente** lo responde el middleware `hydrate.spoke.tenant` (`ApiErrorResponseDTO('Tenant not found.', 404)`), no las Actions.
+
+**Firmas PHP (Hub):** los controladores en `app/Http/Controllers/Api/` declaran **uniones explícitas** (`SuccessDTO|ApiErrorResponseDTO`) en lugar de `Responsable`, para que Claudia/Spoke vean el contrato en el IDE. La lógica de negocio vive en `App\Actions\Spoke\*` invocada desde el controlador.
+
+**Tenant en Spoke:** grupo de rutas `middleware(['satellite', 'hydrate.spoke.tenant'])`. Lee `tenant_id` desde query, body o cabecera `X-Tenant-Id`; omite hidratación en `POST /provision-tenant` y si falta `tenant_id` (el FormRequest correspondiente puede devolver 422).
+
+---
+
+## Middleware `satellite` + `hydrate.spoke.tenant` — `prefix: v1/spoke`
+
+| Método | Ruta | Controlador | Entrada (request / Data) | Respuesta principal (éxito) |
+|--------|------|-------------|---------------------------|------------------------------|
+| POST | `/provision-tenant` | `ProvisionTenantController` | `ProvisionTenantRequest` | `ProvisionTenantResponseDTO` |
+| GET | `/vaults` | `VaultController@index` | `SpokeTenantIdRequest` (query/body `tenant_id`) | `VaultListResponseDTO` |
+| POST | `/vaults` | `VaultController@store` | `CreateVaultRequest` → `toDTO()` | `VaultCreatedResponseDTO` |
+| DELETE | `/vaults/{id}` | `VaultController@destroy` | `SpokeTenantIdRequest` | `NoContentResponseDTO` |
+| GET | `/vaults/{id}/documents` | `VaultController@documents` | `SpokeTenantIdRequest` | `VaultDocumentsResponseDTO` |
+| GET | `/vaults/{id}/metrics` | `VaultController@metrics` | `SpokeTenantIdRequest` | `VaultVectorMetricsResponseDTO` |
+| POST | `/vaults/{vault_id}/documents` | `VaultDocumentController@store` | `UploadDocumentRequest` | `VaultDocumentQueuedResponseDTO` |
+| DELETE | `/vaults/{vault_id}/documents/{doc_id}` | `VaultDocumentController@destroy` | `SpokeTenantIdRequest` | `NoContentResponseDTO` |
+| POST | `/vaults/{vault_id}/documents/{doc_id}/reindex` | `VaultDocumentController@reindex` | `SpokeTenantIdRequest` | `VaultDocumentQueuedResponseDTO` |
+| POST | `/knowledge/ingest` | `KnowledgeController@ingest` | `IngestKnowledgeRequest` | `KnowledgeIngestQueuedResponseDTO` |
+| POST | `/agents/magic-draft` | `MagicDraftController` | `MagicDraftRequest` | `MagicDraftCreatedResponseDTO` |
+| GET | `/agents` | `AgentController@index` | `SpokeTenantIdRequest` | `AgentListResponseDTO` |
+| POST | `/agents` | `AgentController@store` | `CreateAgentRequest` | `AgentCreatedResponseDTO` |
+| GET | `/agents/{id}` | `AgentController@show` | `SpokeTenantIdRequest` | `AgentShowResponseDTO` |
+| PUT | `/agents/{id}` | `AgentController@update` | `UpdateAgentRequest` | `AgentUpdatedResponseDTO` |
+| PUT | `/agents/{id}/toggle` | `AgentController@toggle` | `ToggleAgentRequest` | `AgentToggledResponseDTO` |
+| PUT | `/agents/{id}/extractor-config` | `AgentController@updateExtractorConfig` | `UpdateExtractorConfigRequest` | `AgentExtractorConfigResponseDTO` |
+| PUT | `/agents/{id}/config` | `AgentController@updateConfig` | `UpdateSpokeAgentConfigRequest` | `AgentConfigUpdatedResponseDTO` |
+| POST | `/agents/{id}/approve-inspector-schema` | `AgentController@approveInspectorSchema` | `ApproveInspectorSchemaRequest` | `AgentExtractorConfigResponseDTO` |
+| POST | `/agents/{id}/execute` | `ExecuteAgentTaskController@store` | `ExecuteAgentTaskRequest` | `TaskCreatedResponseDTO` (`Network\`, tarea worker) |
+| GET | `/agents/{tenant_agent_id}/chat-history` | `ChatHistoryController@show` | `SpokeTenantIdRequest` | `ChatHistoryResponseDTO` |
+| GET | `/connections` | `ConnectionsController@show` | `SpokeTenantIdRequest` | `ConnectionsResponseDTO` |
+| GET | `/blind-spots` | `BlindSpotsController@show` | `SpokeTenantIdRequest` | `BlindSpotsResponseDTO` |
+| GET | `/disk-usage` | `DiskUsageController@show` | `SpokeTenantIdRequest` | `DiskUsageResponseDTO` |
+| GET | `/quota` | `QuotaController@show` | `SpokeTenantIdRequest` | `QuotaResponseDTO` |
+| POST | `/quota/top-up` | `QuotaController@topUp` | `TopUpQuotaRequest` | `QuotaTopUpResponseDTO` |
+| GET | `/schemas` | `SchemaController@index` | `SchemaIndexRequest` | `SchemaListResponseDTO` |
+| POST | `/tasks` | `TaskController@store` | `CreateTaskRequest` | `TaskCreatedResponseDTO` (`Spoke\Responses`, incluye `SpokeOperationStatus`) |
+| GET | `/meta-agent/insight` | `InsightController@show` | `SpokeTenantIdRequest` | `InsightResponseDTO` |
+| POST | `/meta-agent/chat` | `MetaAgentController@chat` | `MetaAgentChatRequest` | `MetaAgentReplyResponseDTO` |
+
+---
+
+## `auth:sanctum` + tenant API — `prefix: v1/hub`
+
+| Método | Ruta | Controlador | Entrada | Respuesta principal |
+|--------|------|-------------|---------|---------------------|
+| POST | `/tasks` | `TaskIngestionController` | `IngestAgentTaskRequest` | `TaskCreatedResponseDTO` |
+| POST | `/agents/{tenant_agent_id}/execute` | `AgentGatewayController@handle` | `Request` (sin Form Request dedicado) | `ApiErrorResponseDTO` (gateway aún no ejecuta flujo completo) |
+| POST | `/vault/ingest/text` | `VaultIngestionController@ingestPost` | `HubIngestTextData` | `VaultDocumentEnqueuedResponseDTO` |
+| POST | `/vault/ingest/file` | `VaultIngestionController@ingestFile` | `HubIngestFileData` | `VaultDocumentEnqueuedResponseDTO` |
+
+---
+
+## Widget (público) — `prefix: v1/widget`
+
+| Método | Ruta | Controlador | Entrada | Respuesta principal |
+|--------|------|-------------|---------|---------------------|
+| GET | `/{tenant_agent_id}/embed.js` | `WidgetApiController@embedScript` | — | `Response` (JS) |
+| POST | `/{tenant_agent_id}/chat` | `WidgetApiController@sendMessage` | `WidgetSendMessageRequest` | `WidgetChatEnqueuedResponseDTO` / `WidgetRateLimitedResponseDTO` |
+| GET | `/task/{task_id}/status` | `WidgetApiController@checkStatus` | — | `WidgetTaskStatusResponseDTO` |
+
+---
+
+## Funnel (sin prefijo satélite)
+
+| Método | Ruta | Controlador | Entrada | Respuesta principal |
+|--------|------|-------------|---------|---------------------|
+| POST | `/v1/funnel/{tenant_agent_id}/intake` | `ContactFunnelController@handle` | `ContactFunnelRequest` | `ContactFunnelQueuedResponseDTO` |
+| GET | `/v1/funnel/tasks/{task_id}/status` | `ContactFunnelController@checkStatus` | — | `ContactFunnelStatusResponseDTO` |
+
+---
+
+## Webhooks inbound — `prefix: v1/webhooks`
+
+| Método | Ruta | Controlador | Entrada | Respuesta |
+|--------|------|-------------|---------|-----------|
+| POST | `/email` | `VaultIngestionController@ingestEmail` | `Request` (sin DTO dedicado; lógica en `IngestInboundEmailAction`) | `204` sin cuerpo |
+
+---
+
+## Webhooks salientes Hub → Spoke (no son rutas)
+
+| DTO | Uso |
+|-----|-----|
+| `HubWebhookDTO` | Tareas (`TaskStatus`, `WebhookEvent`) | 
+| `ExtractionHubWebhookDTO` | Extracción (`DocumentStatus`) |
+
+Ver `docs/HUB_SPOKE_HTTP_CONTRACT.md` y PHPDoc en cada DTO.
