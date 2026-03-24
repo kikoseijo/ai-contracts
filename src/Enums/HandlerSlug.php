@@ -9,6 +9,7 @@ use Sunnyface\Contracts\Data\Spoke\UiManifestData;
 enum HandlerSlug: string
 {
     case Talker = 'talker';
+    case FinancialAdvisor = 'financial-advisor';
     case TextTranslator = 'text-translator';
     case VisionExtractor = 'vision-extractor';
     case DocumentClassifier = 'document-classifier';
@@ -19,6 +20,7 @@ enum HandlerSlug: string
     {
         return match ($this) {
             self::Talker => 'Conversacional (Talker)',
+            self::FinancialAdvisor => 'Asesor Financiero (Agentic)',
             self::TextTranslator => 'Traductor de Texto',
             self::VisionExtractor => 'Extractor Visual',
             self::DocumentClassifier => 'Clasificador de Documentos',
@@ -29,13 +31,13 @@ enum HandlerSlug: string
 
     public function isWorker(): bool
     {
-        return ! in_array($this, [self::Talker, self::MetaAgent], true);
+        return ! in_array($this, [self::Talker, self::FinancialAdvisor, self::MetaAgent], true);
     }
 
     public function uiManifest(): UiManifestData
     {
         return match ($this) {
-            self::Talker, self::MetaAgent, self::TextTranslator => new UiManifestData(
+            self::Talker, self::FinancialAdvisor, self::MetaAgent, self::TextTranslator => new UiManifestData(
                 components: [AgentComponent::Chat, AgentComponent::BitacoraWidget],
             ),
             self::VisionExtractor, self::DocumentClassifier => new UiManifestData(
