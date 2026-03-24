@@ -2,20 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Sunnyface\Contracts\Data\Network;
+namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
 use Illuminate\Http\JsonResponse;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
 
 /**
- * Respuesta del Hub al solicitar los documentos de una bóveda.
+ * Respuesta de volumetría vectorial de una bóveda.
+ * Usada en la API Hub → Spoke para el mapa de calor.
  */
-final class VaultDocumentsResponseDTO extends Data
+final class VaultVectorMetricsResponseDTO extends Data
 {
     public function __construct(
-        public readonly VaultItemDTO $vault,
-        #[DataCollectionOf(VaultDocumentItemDTO::class)]
+        public readonly int $total_chunks,
+        #[DataCollectionOf(VaultDocumentMetricDTO::class)]
         public readonly array $documents,
     ) {}
 

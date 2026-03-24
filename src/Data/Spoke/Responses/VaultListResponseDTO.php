@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Sunnyface\Contracts\Data\Network;
+namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
 use Illuminate\Http\JsonResponse;
 use Spatie\LaravelData\Attributes\DataCollectionOf;

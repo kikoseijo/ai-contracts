@@ -9,13 +9,13 @@ use Spatie\LaravelData\Data;
 use Sunnyface\Contracts\Enums\SpokeOperationStatus;
 
 /**
- * Respuesta canónica tras encolar una tarea desde el Spoke.
+ * Respuesta del Hub tras crear una bóveda.
  */
-final class TaskCreatedResponseDTO extends Data
+final class VaultCreatedResponseDTO extends Data
 {
     public function __construct(
         public readonly SpokeOperationStatus $status,
-        public readonly string $task_id,
+        public readonly VaultItemDTO $vault,
     ) {}
 
     public function toResponse($request): JsonResponse
