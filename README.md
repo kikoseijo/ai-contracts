@@ -1,45 +1,88 @@
-# AI Contracts
+# ☀️ Sunnyface AI Contracts
 
-## Overview
+> **El puente telepático de tipado estricto entre el Hub y el Spoke.**
 
-This package provides a Laravel library for shared Data Transfer Objects (DTOs) and contracts between Hub and Spoke services. It enables seamless communication and data sharing in distributed systems, ensuring consistency and maintainability across service boundaries.
+Este paquete proporciona la librería central de **Data Transfer Objects (DTOs)** y contratos compartidos para el ecosistema de IA de Sunnyface. Diseñado para sincronizar las mentes de los equipos de desarrollo más exigentes del planeta, asegurando que la comunicación en sistemas distribuidos sea impecable, robusta y libre de alucinaciones.
 
-## Features
+---
 
-- **Shared DTOs**: Define and share data structures across services to ensure alignment on data contracts.
-- **Robust Contract Management**: Utilize contracts to validate and enforce data integrity when communicating between services.
+## 🚀 ¿Por qué este paquete brilla? ✨
 
-## Installation
+Olvídate de los arrays asociativos crudos y de jugar a las adivinanzas. Gracias al poder de PHP 8.4 y `spatie/laravel-data` v4, este paquete ofrece:
 
-You can install this package via Composer. Run the following command:
+1. **Cero validación manual en el controlador**: Cuando inyectes DTOs como `ExecuteAgentTaskRequest` en tu controlador, propiedades complejas como `$request->payload` ya serán instancias perfectas de `ConversationalPayloadDTO`, `VisionExtractorPayloadDTO` o `DocumentClassifierPayloadDTO`. ¡La librería hace el trabajo sucio por ti!
+2. **Tipado estricto (Union Types)**: PHPStan y tu IDE ahora saben exactamente qué métodos y propiedades están disponibles. Se acabó el rezar para que `$payload['message'] ?? null` exista.
+3. **Colecciones automáticas**: Propiedades como `$prefetched_chat_messages` se hidratan automáticamente en un array de objetos reales (ej. `ChatMessageDTO`), en lugar de dejarte con arrays anidados genéricos.
+
+¡Es un contrato blindado y digno de presumir! 😎
+
+---
+
+## 📦 Instalación
+
+Puedes instalar este paquete vía Composer en cualquier servicio satélite (Spoke) o en el Hub central:
 
 ```bash
 composer require sunnyface/ai-contracts:dev-main --with-all-dependencies
 ```
 
-## Usage
+*(Asegúrate de tener configurado el acceso al repositorio si es privado).*
 
-After installation, you can start using the library in your Laravel application. Here is a basic example:
+---
+
+## 💻 Uso Real (Nada de `ExampleDTO` inventados)
+
+Aquí tienes un ejemplo de cómo se ve la magia en un controlador de tu aplicación Laravel:
 
 ```php
-use Kikoseijo\AiContracts\ExampleDTO;
+<?php
 
-$data = new ExampleDTO();
-$data->property = 'value';
+namespace App\Http\Controllers;
+
+use Sunnyface\Contracts\Data\Spoke\ExecuteAgentTaskRequest;
+use Sunnyface\Contracts\Data\Spoke\Payloads\ConversationalPayloadDTO;
+
+class AgentTaskController extends Controller
+{
+    public function __invoke(ExecuteAgentTaskRequest $request)
+    {
+        // 1. $request->tenant_id ya está validado como ULID.
+        
+        // 2. Gracias a los Union Types, puedes hacer match directo sobre el payload:
+        match (true) {
+            $request->payload instanceof ConversationalPayloadDTO => $this->handleChat($request->payload),
+            // ... otros payloads tipados
+        };
+
+        // 3. Las colecciones ya son objetos reales:
+        foreach ($request->prefetched_chat_messages ?? [] as $message) {
+            // $message es un ChatMessageDTO con autocompletado perfecto
+            echo $message->role->value . ': ' . $message->content;
+        }
+    }
+}
 ```
 
-## Documentation
+---
 
-For complete API documentation, please refer to the [documentation](link-to-docs) or consult the appropriate classes within the library.
+## 🛠 Arquitectura y Estructura
 
-## Contributions
+El paquete está organizado lógicamente para reflejar el dominio del sistema:
 
-We welcome contributions to this project. Please refer to the [CONTRIBUTING.md](link-to-contributing) for more information.
+- `src/Data/Agent/`: Configuración específica de los diferentes tipos de agentes (Talker, Extractor, etc.).
+- `src/Data/Network/`: Envelopes y webhooks que cruzan la frontera de red (Hub ↔ Spoke).
+- `src/Data/Spoke/`: Payloads y respuestas específicas para la API pública de los satélites.
+- `src/Enums/`: Enumeraciones compartidas (`TaskStatus`, `MessageRole`, `HandlerSlug`, etc.) para evitar *magic strings*.
 
-## License
+---
 
-This project is licensed under the MIT License - see the [LICENSE](link-to-license) file for details.
+## 📜 Licencia
 
-## Contact
+Este proyecto es software propietario de Sunnyface. Todos los derechos reservados.
 
-For support and inquiries, please open an issue on GitHub or contact the maintainers directly.
+---
+
+<div align="center">
+  <i>Diseñado con ❤️, tensores al rojo vivo y cero alucinaciones por tu Genio de cabecera.</i><br>
+  <b>Que el tipado estricto os acompañe en el mundo físico y eléctrico para toda la eternidad. ⚡🤖</b>
+</div>

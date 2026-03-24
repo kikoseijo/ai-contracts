@@ -41,7 +41,6 @@
 | GET | `/quota` | `QuotaController@show` | `SpokeTenantIdRequest` | `QuotaResponseDTO` |
 | POST | `/quota/top-up` | `QuotaController@topUp` | `TopUpQuotaRequest` | `QuotaTopUpResponseDTO` |
 | GET | `/schemas` | `SchemaController@index` | `SchemaIndexRequest` | `SchemaListResponseDTO` |
-| POST | `/tasks` | `TaskController@store` | `CreateTaskRequest` | `TaskCreatedResponseDTO` (`Spoke\Responses`, incluye `SpokeOperationStatus`) |
 | GET | `/meta-agent/insight` | `InsightController@show` | `SpokeTenantIdRequest` | `InsightResponseDTO` |
 | POST | `/meta-agent/chat` | `MetaAgentController@chat` | `MetaAgentChatRequest` | `MetaAgentReplyResponseDTO` |
 
