@@ -16,6 +16,8 @@ final class ProvisionTenantResponseDTO extends Data
     public function __construct(
         public readonly SpokeOperationStatus $status,
         public readonly string $tenant_id,
+        public readonly ?string $default_agent_id = null,
+        public readonly ?string $default_vault_id = null,
     ) {}
 
     public function toResponse($request): JsonResponse
