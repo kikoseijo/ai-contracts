@@ -20,6 +20,7 @@ final class UpdateAgentConfigRequestDTO extends Data
         public readonly string $name,
         public readonly string $greeting,
         public readonly string $custom_instructions,
+        /** @var array<int, string> */
         public readonly array $vault_ids,
     ) {}
 }

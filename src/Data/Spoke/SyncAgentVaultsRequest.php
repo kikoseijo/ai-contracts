@@ -13,6 +13,7 @@ final class SyncAgentVaultsRequest extends Data
      */
     public function __construct(
         public readonly string $tenant_id,
+        /** @var array<int, string> */
         public readonly array $vault_ids,
     ) {}
 }

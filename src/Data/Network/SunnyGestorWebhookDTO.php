@@ -11,6 +11,7 @@ use Sunnyface\Contracts\Enums\SunnyGestorIntentType;
 final class SunnyGestorWebhookDTO extends Data
 {
     /**
+     * @param string $tenant_id
      * @param string $intent_id
      * @param SunnyGestorWebhookStatus $status
      * @param SunnyGestorIntentType $detected_type
@@ -18,6 +19,7 @@ final class SunnyGestorWebhookDTO extends Data
      * @param SunnyGestorExtractedDataDTO|null $extracted_data
      */
     public function __construct(
+        public readonly string $tenant_id,
         public readonly string $intent_id,
         public readonly SunnyGestorWebhookStatus $status,
         public readonly SunnyGestorIntentType $detected_type,

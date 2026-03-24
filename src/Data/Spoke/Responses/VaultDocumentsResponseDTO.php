@@ -7,6 +7,8 @@ namespace Sunnyface\Contracts\Data\Spoke\Responses;
 use Illuminate\Http\JsonResponse;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
+use Sunnyface\Contracts\Data\Network\VaultDocumentItemDTO;
+use Sunnyface\Contracts\Data\Network\VaultItemDTO;
 
 /**
  * Respuesta del Hub al solicitar los documentos de una bóveda.

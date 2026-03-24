@@ -6,6 +6,7 @@ namespace Sunnyface\Contracts\Data\Network;
 
 use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
+use Sunnyface\Contracts\Data\Spoke\Responses\ChatMessageDTO;
 
 /**
  * Payload que el Spoke envía al Hub para un turno de conversación
@@ -16,7 +17,7 @@ final class MetaAgentMessageRequestDTO extends Data
     public function __construct(
         public readonly string $tenant_id,
         public readonly string $message,
-        #[DataCollectionOf(ConversationTurnDTO::class)]
+        #[DataCollectionOf(ChatMessageDTO::class)]
         public readonly array $history,
     ) {}
 }

@@ -16,6 +16,7 @@ class ApproveInspectorSchemaRequest extends Data
         public readonly string $tenant_id,
 
         #[Required]
+        /** @var array<string, mixed> */
         public readonly array $discovered_schema,
 
         #[Required, In('dedicated', 'generic', 'webhook')]

@@ -15,6 +15,7 @@ final class SpokeToolDefinitionDTO extends Data
         #[Required]
         public readonly string $description,
         #[Required]
+        /** @var array<string, mixed> */
         public readonly array $parameters,
     ) {}
 }
