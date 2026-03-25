@@ -13,6 +13,6 @@ final class SpokeToolExecutionRequestDTO extends Data
         public readonly string $tenant_agent_id,
         public readonly string $tool_name,
         /** @var array<string, mixed> */
-        public readonly array $arguments,
+        public readonly array $arguments = [],
     ) {}
 }
