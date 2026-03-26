@@ -31,7 +31,8 @@
 | PUT | `/agents/{id}` | `AgentController@update` | `UpdateAgentRequest` | `AgentUpdatedResponseDTO` |
 | PUT | `/agents/{id}/toggle` | `AgentController@toggle` | `ToggleAgentRequest` | `AgentToggledResponseDTO` |
 | PUT | `/agents/{id}/extractor-config` | `AgentController@updateExtractorConfig` | `UpdateExtractorConfigRequest` | `AgentExtractorConfigResponseDTO` |
-| PUT | `/agents/{id}/config` | `AgentController@updateConfig` | `UpdateAgentConfigRequestDTO` (`Network\`) | `AgentConfigUpdatedResponseDTO` |
+| PUT | `/agents/{id}/config` | `AgentController@updateConfig` | `UpdateSpokeAgentConfigRequest` | `AgentConfigUpdatedResponseDTO` |
+| PUT | `/agents/{id}/vaults/sync` | `AgentController@syncVaults` | `SyncAgentVaultsRequest` | `AgentUpdatedResponseDTO` |
 | POST | `/agents/{id}/approve-inspector-schema` | `AgentController@approveInspectorSchema` | `ApproveInspectorSchemaRequest` | `AgentExtractorConfigResponseDTO` |
 | POST | `/agents/{id}/execute` | `ExecuteAgentTaskController@store` | `ExecuteAgentTaskRequest` | `TaskCreatedResponseDTO` (`Network\`, tarea worker) |
 | GET | `/agents/{tenant_agent_id}/chat-history` | `ChatHistoryController@show` | `SpokeTenantIdRequest` | `ChatHistoryResponseDTO` |
@@ -52,9 +53,9 @@
 | Método | Ruta | Controlador | Entrada | Respuesta principal |
 |--------|------|-------------|---------|---------------------|
 | POST | `/tasks` | `TaskIngestionController` | `IngestAgentTaskRequest` | `TaskCreatedResponseDTO` |
-| POST | `/agents/{tenant_agent_id}/execute` | `AgentGatewayController@handle` | `Request` (sin Form Request dedicado) | `ApiErrorResponseDTO` (gateway aún no ejecuta flujo completo) |
-| POST | `/vault/ingest/text` | `VaultIngestionController@ingestPost` | `IngestTextData` | `VaultDocumentQueuedResponseDTO` |
-| POST | `/vault/ingest/file` | `VaultIngestionController@ingestFile` | `IngestFileData` | `VaultDocumentQueuedResponseDTO` |
+| POST | `/agents/{tenant_agent_id}/execute` | `AgentGatewayController@handle` | `string $tenant_agent_id` (sin Form Request dedicado) | `TaskCreatedResponseDTO \| ApiErrorResponseDTO` |
+| POST | `/vault/ingest/text` | `VaultIngestionController@ingestPost` | `HubIngestTextData` (`App\Data\Vault\`) | `VaultDocumentQueuedResponseDTO` |
+| POST | `/vault/ingest/file` | `VaultIngestionController@ingestFile` | `HubIngestFileData` (`App\Data\Vault\`) | `VaultDocumentQueuedResponseDTO` |
 
 ---
 
@@ -81,7 +82,7 @@
 
 | Método | Ruta | Controlador | Entrada | Respuesta |
 |--------|------|-------------|---------|-----------|
-| POST | `/email` | `VaultIngestionController@ingestEmail` | `Request` (sin DTO dedicado; lógica en `IngestInboundEmailAction`) | `204` sin cuerpo |
+| POST | `/email` | `VaultIngestionController@ingestEmail` | `InboundEmailPayloadDTO` (`App\Data\Vault\`) | `NoContentResponseDTO` (204) |
 
 ---
 
