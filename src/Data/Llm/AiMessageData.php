@@ -24,6 +24,6 @@ final class AiMessageData extends Data
         public readonly string $response,
         CitationDTO ...$citations,
     ) {
-        $this->citations = array_values($citations);
+        $this->citations = CitationDTO::collect(array_values($citations));
     }
 }

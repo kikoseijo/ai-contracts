@@ -18,4 +18,9 @@ final class ApiErrorResponseDTO extends Data
         public readonly int $httpStatus,
     ) {}
 
+    public function toResponse($request)
+    {
+        return response()->json($this, $this->httpStatus);
+    }
+
 }

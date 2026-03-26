@@ -19,4 +19,9 @@ final class TaskCreatedResponseDTO extends Data
         public readonly TaskStatus $status,
     ) {}
 
+    public function toResponse($request)
+    {
+        return response()->json($this, 202);
+    }
+
 }

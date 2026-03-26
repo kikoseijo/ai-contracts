@@ -131,7 +131,7 @@ final class CognitiveContextDTO extends Data
             inputPayload: $inputPayload,
             chatSessionId: $chatSessionId,
             prefetchedChatMessages: $prefetchedChatMessages,
-            statusLedger: LedgerEntryDTO::collection([new LedgerEntryDTO(status: 'Pending', timestamp: $now, duration_ms: 0.0)]),
+            statusLedger: LedgerEntryDTO::collect([new LedgerEntryDTO(status: 'Pending', timestamp: $now, duration_ms: 0.0)], \Spatie\LaravelData\DataCollection::class),
         );
     }
 
@@ -202,7 +202,7 @@ final class CognitiveContextDTO extends Data
         $clone = clone $this;
         $items = $this->telemetry?->items() ?? [];
         $items[] = $entry;
-        $clone->telemetry = WorkerResultDTO::collection($items);
+        $clone->telemetry = WorkerResultDTO::collect($items, \Spatie\LaravelData\DataCollection::class);
 
         return $clone;
     }
@@ -212,7 +212,7 @@ final class CognitiveContextDTO extends Data
         $clone = clone $this;
         $items = $this->toolExecutions?->items() ?? [];
         $items[] = $execution;
-        $clone->toolExecutions = ToolExecutionDTO::collection($items);
+        $clone->toolExecutions = ToolExecutionDTO::collect($items, \Spatie\LaravelData\DataCollection::class);
 
         return $clone;
     }
@@ -248,10 +248,10 @@ final class CognitiveContextDTO extends Data
     {
         $clone = clone $this;
         $items = $entries instanceof DataCollection ? $entries->items() : $entries;
-        $clone->statusLedger = LedgerEntryDTO::collection(array_map(
+        $clone->statusLedger = LedgerEntryDTO::collect(array_map(
             static fn (LedgerEntryDTO|array $entry): LedgerEntryDTO => $entry instanceof LedgerEntryDTO ? $entry : LedgerEntryDTO::from($entry),
             $items,
-        ));
+        ), \Spatie\LaravelData\DataCollection::class);
 
         return $clone;
     }
@@ -294,7 +294,7 @@ final class CognitiveContextDTO extends Data
             duration_ms: $durationMs,
         );
 
-        return LedgerEntryDTO::collection($ledger);
+        return LedgerEntryDTO::collect($ledger, \Spatie\LaravelData\DataCollection::class);
     }
 
     /**
