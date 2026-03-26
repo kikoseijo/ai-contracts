@@ -39,4 +39,34 @@ return [
             'description' => 'Background process responsible for vectorizing and storing documents in the knowledge base.',
         ],
     ],
+    'vault_types' => [
+        'raw' => [
+            'label' => 'Direct Storage',
+            'description' => 'Stores raw documents without processing. Ideal for files that only need to be available for download.',
+        ],
+        'rag' => [
+            'label' => 'RAG (Semantic Search)',
+            'description' => 'Indexes documents for semantic search using vector embeddings. Use this for knowledge bases and chatbots.',
+        ],
+        'extraction' => [
+            'label' => 'Data Extraction',
+            'description' => 'Extracts structured data from documents (invoices, contracts, forms) using AI vision.',
+        ],
+        'classification' => [
+            'label' => 'Document Classification',
+            'description' => 'Automatically classifies documents by type and content using language models.',
+        ],
+    ],
+    'vault_document_types' => [
+        'document' => 'Document',
+        'audio' => 'Audio',
+        'image' => 'Image',
+        'text' => 'Plain Text',
+    ],
+    'log_levels' => [
+        'info' => 'Information',
+        'warning' => 'Warning',
+        'error' => 'Error',
+        'critical' => 'Critical',
+    ],
 ];

@@ -39,4 +39,34 @@ return [
             'description' => 'Proceso de fondo encargado de vectorizar y almacenar documentos en la base de conocimiento.',
         ],
     ],
+    'vault_types' => [
+        'raw' => [
+            'label' => 'Almacenamiento Directo',
+            'description' => 'Almacena documentos sin procesar. Ideal para archivos que solo necesitan estar disponibles para descarga.',
+        ],
+        'rag' => [
+            'label' => 'RAG (Búsqueda Semántica)',
+            'description' => 'Indexa documentos para búsqueda semántica con embeddings vectoriales. Usa esto para bases de conocimiento y chatbots.',
+        ],
+        'extraction' => [
+            'label' => 'Extracción de Datos',
+            'description' => 'Extrae datos estructurados de documentos (facturas, contratos, formularios) usando visión AI.',
+        ],
+        'classification' => [
+            'label' => 'Clasificación de Documentos',
+            'description' => 'Clasifica automáticamente documentos por tipo y contenido usando modelos de lenguaje.',
+        ],
+    ],
+    'vault_document_types' => [
+        'document' => 'Documento',
+        'audio' => 'Audio',
+        'image' => 'Imagen',
+        'text' => 'Texto Plano',
+    ],
+    'log_levels' => [
+        'info' => 'Información',
+        'warning' => 'Advertencia',
+        'error' => 'Error',
+        'critical' => 'Crítico',
+    ],
 ];
