@@ -11,7 +11,7 @@ use Spatie\LaravelData\Data;
 use Sunnyface\Contracts\Data\Spoke\Payloads\ConversationalPayloadDTO;
 use Sunnyface\Contracts\Data\Spoke\Payloads\DocumentClassifierPayloadDTO;
 use Sunnyface\Contracts\Data\Spoke\Payloads\VisionExtractorPayloadDTO;
-
+use Sunnyface\Contracts\Data\Spoke\Responses\ChatMessageDTO;
 /**
  * Envelope canónico que cruza la frontera Spoke→Hub para iniciar una tarea.
  *
@@ -30,7 +30,7 @@ final class AgenticTaskRequestDTO extends Data
         #[Required]
         public readonly ConversationalPayloadDTO|DocumentClassifierPayloadDTO|VisionExtractorPayloadDTO $input_payload,
 
-        #[DataCollectionOf(\Sunnyface\Contracts\Data\Spoke\Responses\ChatMessageDTO::class)]
-        public readonly ?\Spatie\LaravelData\DataCollection $prefetched_chat_messages = null,
+        #[DataCollectionOf(ChatMessageDTO::class)]
+        public readonly ?DataCollection $prefetched_chat_messages = null,
     ) {}
 }

@@ -1,0 +1,14 @@
+<?php
+// ESTE ARCHIVO ES SOLO UNA REFERENCIA PARA LA IA. NO USAR EN PRODUCCIÓN.
+// Ejemplo Perfecto de un DTO C.O.R.E.:
+
+final class ReferenceDTO extends BaseCoreDTO
+{
+    public function __construct(
+        #[Required, Ulid]
+        public readonly string $id,
+        
+        #[DataCollectionOf(SubItemDTO::class)]
+        public readonly DataCollection $items, // <- Fíjate IA, esto no es un array crudo.
+    ) {}
+}

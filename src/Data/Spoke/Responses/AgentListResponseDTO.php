@@ -8,7 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
 use Sunnyface\Contracts\Data\Spoke\AgentSummaryData;
-
+use Spatie\LaravelData\DataCollection;
 /**
  * Envelope de respuesta para el listado de agentes de un tenant.
  */
@@ -16,11 +16,6 @@ final class AgentListResponseDTO extends Data
 {
     public function __construct(
         #[DataCollectionOf(AgentSummaryData::class)]
-        public readonly array $agents,
+        public readonly DataCollection $agents,
     ) {}
-
-    public function toResponse($request): JsonResponse
-    {
-        return response()->json($this, 200);
-    }
 }

@@ -1,0 +1,13 @@
+---
+alwaysApply: true
+---
+
+# Spatie Laravel Data - Reglas para Nanobots
+
+Este proyecto usa `spatie/laravel-data`. NUNCA uses las convenciones nativas de PHP para DTOs, usa estas:
+
+1. **Colecciones:** PROHIBIDO usar `array` para listas de objetos. USA SIEMPRE:
+
+   ```php
+   #[DataCollectionOf(MiClaseDTO::class)]
+   public readonly DataCollection $propiedad;

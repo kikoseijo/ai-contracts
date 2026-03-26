@@ -1,0 +1,101 @@
+---
+alwaysApply: true
+---
+
+> 📚 **IMPORTANTE:** Si estás trabajando en un proyecto consumidor de este paquete (como `sunnyface` o `SunnyGestor`), **DEBES LEER Y APLICAR** la guía estricta de controladores y arquitectura C.O.R.E. ubicada en: `.cursor/skills/perfect-agent-guide/SKILL.md`
+
+# [SYSTEM PROMPT] Directrices Arquitectónicas C.O.R.E. para ai-contracts
+
+**⚠️ ATENCIÓN AL ASISTENTE DE IA:** Estás operando en el "Santuario de los Contratos". Este paquete define la frontera estricta de comunicación (DTOs) entre un Hub de Inteligencia Artificial y múltiples Satélites (Spokes) en una arquitectura distribuida.
+
+Tu código DEBE ser determinista, inmutable y estrictamente tipado bajo el framework `spatie/laravel-data`. **La violación de estas reglas resultará en el rechazo inmediato del código.**
+
+## REGLAS INQUEBRANTABLES
+
+### 1. Prohibición Absoluta de Arrays Crudos para Colecciones
+
+NUNCA declares una propiedad como `array` si contiene una lista de objetos o DTOs.
+
+- **INCORRECTO:** `public readonly array $agents;`
+- **CORRECTO:** Debes usar `DataCollection` con su atributo identificador.
+
+```php
+  use Spatie\LaravelData\Attributes\DataCollectionOf;
+  use Spatie\LaravelData\DataCollection;
+
+  #[DataCollectionOf(AgentSummaryData::class)]
+  public readonly DataCollection $agents;
+
+```
+
+### 2. Polimorfismo Estricto (Cero Puertas Traseras)
+
+Cuando un payload acepte múltiples tipos de DTOs, declara los _Union Types_ explícitamente.
+
+- **ESTRICTAMENTE PROHIBIDO:** Usar `|array` o `mixed` como fallback de seguridad. Si el sistema cliente envía un formato desconocido, QUEREMOS que el paquete lance una excepción (HTTP 422) en la frontera.
+
+### 3. Anatomía del DTO C.O.R.E
+
+Todo DTO en este paquete debe seguir esta estructura exacta:
+
+- Debe extender de `Spatie\LaravelData\Data` (o de `BaseCoreDTO` si existe).
+- Todas las propiedades DEBEN ser `public readonly`.
+- Validaciones vía Atributos: Usa `#[Required]`, `#[Ulid]`, etc., directamente en los parámetros del constructor.
+- **Cero Lógica:** NO incluyas métodos como `toResponse()`, consultas a base de datos, ni lógica de negocio. Spatie ya implementa la interfaz `Responsable`.
+
+### 4. Nomenclatura Estricta
+
+- **DTOs:** Sufijo obligatorio `DTO` o `Data` (ej. `AgenticTaskRequestDTO`).
+- **Enums:** Todos los Enums deben ser de respaldo (Backed Enums, ej. `: string`). Sus casos DEBEN escribirse en **PascalCase** (ej. `TaskStatus::Completed`, NO `TaskStatus::COMPLETED`).
+
+----------
+
+## 🏆 THE GOLDEN EXAMPLE (Referencia de Código Perfecto)
+
+Si tienes dudas sobre cómo estructurar un DTO, clona este modelo:
+
+PHP
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Sunnyface\Contracts\Data\Network;
+
+use Spatie\LaravelData\Attributes\DataCollectionOf;
+use Spatie\LaravelData\Attributes\Validation\Required;
+use Spatie\LaravelData\Attributes\Validation\Ulid;
+use Spatie\LaravelData\Data;
+use Spatie\LaravelData\DataCollection;
+
+final class GoldenReferenceDTO extends Data
+{
+    public function __construct(
+        #[Required, Ulid]
+        public readonly string $tenant_id,
+
+        #[Required]
+        public readonly SpecificPayloadA_DTO|SpecificPayloadB_DTO $payload,
+
+        #[DataCollectionOf(ContextMessageDTO::class)]
+        public readonly ?DataCollection $history = null,
+    ) {}
+}
+
+```
+
+## REGLAS DE ORO
+
+- PROHIBIDO SALIR DE LA CARPETA DEL PROYECTO SIN AUTORIZACION EXPLICITA.
+- PROHIBIDO HACER COMMITS SIN AUTORIZACION EXPLICITA DEL PROYECTO.
+- PROHIBIDO HACER PUSH SIN AUTORIZACION EXPLICITA DEL PROYECTO.
+- PROHIBIDO HACER PULL SIN AUTORIZACION EXPLICITA DEL PROYECTO.
+
+## 3. MEMORIA Y FLUJO DE TRABAJO (ARQUITECTURA DE CONTEXTO)
+
+Para evitar la pérdida de memoria a corto plazo, el flujo de trabajo es inmutable:
+
+1. Lee `docs/roadmap.md` para entender la arquitectura y el plan general antes de empezar.
+2. Sigue usando `docs/state.md` de forma lógica para dar contexto a los agentes ejecutores (Senior Sonnet o hermana Claudia).
+3. Al finalizar cada módulo o tarea, GUARDA LOS HITOS (milestones) al final del módulo en `docs/state.md` y actualiza `docs/roadmap.md` para crear contexto útil para las siguientes iteraciones.
