@@ -23,25 +23,25 @@ final class WorkerResultDTO extends Data
         public readonly PipeName $pipeName,
 
         /** Respuesta cruda del LLM (JSON, texto plano, o null si el Pipe no llama al LLM). */
-        public readonly ?string $rawLlmResponse = null,
+        public private(set) ?string $rawLlmResponse = null,
 
         /** Tokens consumidos en el prompt de esta llamada LLM. */
-        public readonly int $tokensIn = 0,
+        public private(set) int $tokensIn = 0,
 
         /** Tokens generados en la respuesta de esta llamada LLM. */
-        public readonly int $tokensOut = 0,
+        public private(set) int $tokensOut = 0,
 
         /** Modelo LLM utilizado en este step (ej. 'gpt-4o', 'claude-sonnet-4-6'). */
-        public readonly string $model = '',
+        public private(set) string $model = '',
 
         /**
          * Duración de ejecución del Pipe en milisegundos.
          * Inyectado por TelemetryPipeMiddleware, no por el Pipe mismo.
          */
-        public readonly float $durationMs = 0.0,
+        public private(set) float $durationMs = 0.0,
 
         /** Mensaje de error si el Pipe falló, null si fue exitoso. */
-        public readonly ?string $errorMessage = null,
+        public private(set) ?string $errorMessage = null,
     ) {}
 
     /**
@@ -50,15 +50,10 @@ final class WorkerResultDTO extends Data
      */
     public function withDuration(float $durationMs): self
     {
-        return new self(
-            pipeName: $this->pipeName,
-            rawLlmResponse: $this->rawLlmResponse,
-            tokensIn: $this->tokensIn,
-            tokensOut: $this->tokensOut,
-            model: $this->model,
-            durationMs: $durationMs,
-            errorMessage: $this->errorMessage,
-        );
+        $clone = clone $this;
+        $clone->durationMs = $durationMs;
+
+        return $clone;
     }
 
     public function hasError(): bool

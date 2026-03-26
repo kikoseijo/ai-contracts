@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
-use Spatie\LaravelData\Attributes\DataCollectionOf;
-use Spatie\LaravelData\DataCollection;
 use Spatie\LaravelData\Data;
 use Sunnyface\Contracts\Data\Network\VaultSummaryDTO;
 
@@ -15,8 +13,8 @@ use Sunnyface\Contracts\Data\Network\VaultSummaryDTO;
 final class VaultListResponseDTO extends Data
 {
     public function __construct(
-        #[DataCollectionOf(VaultSummaryDTO::class)]
-        public readonly DataCollection $vaults,
+        /** @var array<int, VaultSummaryDTO>|null */
+        public readonly ?array $vaults = null,
     ) {}
 
 }

@@ -8,7 +8,7 @@ final class ReferenceDTO extends BaseCoreDTO
         #[Required, Ulid]
         public readonly string $id,
         
-        #[DataCollectionOf(SubItemDTO::class)]
-        public readonly DataCollection $items, // <- Fíjate IA, esto no es un array crudo.
+        /** @var array<int, SubItemDTO>|null */
+        public readonly ?array $items = null, // <- Fíjate IA, esto no es un array crudo.
     ) {}
 }

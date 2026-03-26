@@ -12,20 +12,20 @@ Tu código DEBE ser determinista, inmutable y estrictamente tipado bajo el frame
 
 ## REGLAS INQUEBRANTABLES
 
-### 1. Prohibición Absoluta de Arrays Crudos para Colecciones
+### 1. Colecciones Tipadas mediante DocBlocks
 
-NUNCA declares una propiedad como `array` si contiene una lista de objetos o DTOs.
+NUNCA uses `DataCollection` ni el atributo `#[DataCollectionOf]`. Spatie Laravel Data v4 soporta arreglos nativos tipados mediante DocBlocks. Esto simplifica la hidratación y evita problemas de inmutabilidad.
 
-- **INCORRECTO:** `public readonly array $agents;`
-- **CORRECTO:** Debes usar `DataCollection` con su atributo identificador.
-
+- **INCORRECTO:**
 ```php
-  use Spatie\LaravelData\Attributes\DataCollectionOf;
-  use Spatie\LaravelData\DataCollection;
-
   #[DataCollectionOf(AgentSummaryData::class)]
-  public readonly DataCollection $agents;
+  public readonly ?DataCollection $agents = null;
+```
 
+- **CORRECTO:**
+```php
+  /** @var array<int, AgentSummaryData>|null */
+  public readonly ?array $agents = null;
 ```
 
 ### 2. Polimorfismo Estricto (Cero Puertas Traseras)
@@ -84,8 +84,8 @@ final class GoldenReferenceDTO extends Data
         #[Required]
         public readonly SpecificPayloadA_DTO|SpecificPayloadB_DTO $payload,
 
-        #[DataCollectionOf(ContextMessageDTO::class)]
-        public readonly ?DataCollection $history = null,
+        /** @var array<int, ContextMessageDTO>|null */
+        public readonly ?array $history = null,
     ) {}
 }
 

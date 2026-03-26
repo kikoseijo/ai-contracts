@@ -6,8 +6,6 @@ namespace Sunnyface\Contracts\Data\Network;
 
 use Carbon\CarbonImmutable;
 use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Attributes\DataCollectionOf;
-use Spatie\LaravelData\DataCollection;
 
 final class SunnyGestorExtractedDataDTO extends Data
 {
@@ -20,7 +18,7 @@ final class SunnyGestorExtractedDataDTO extends Data
         public readonly ?CarbonImmutable $issue_date,
         public readonly float $total_amount,
         public readonly float $tax_amount,
-        #[DataCollectionOf(SunnyGestorItemDTO::class)]
-        public readonly DataCollection $items,
+        /** @var array<int, SunnyGestorItemDTO>|null */
+        public readonly ?array $items = null,
     ) {}
 }

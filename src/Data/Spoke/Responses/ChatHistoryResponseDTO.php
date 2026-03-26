@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
-use Spatie\LaravelData\Attributes\DataCollectionOf;
-use Spatie\LaravelData\DataCollection;
 use Spatie\LaravelData\Data;
 
 /**
@@ -15,8 +13,8 @@ use Spatie\LaravelData\Data;
 final class ChatHistoryResponseDTO extends Data
 {
     public function __construct(
-        #[DataCollectionOf(ChatMessageDTO::class)]
-        public readonly DataCollection $messages,
+        /** @var array<int, ChatMessageDTO>|null */
+        public readonly ?array $messages = null,
     ) {}
 
 }

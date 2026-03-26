@@ -108,42 +108,33 @@ class AgentListResponseDTO extends Data
 }
 ```
 
-**2. DO NOT use raw arrays with `#[DataCollectionOf]`**
-When using `#[DataCollectionOf]`, the property type MUST be `DataCollection` (or `?DataCollection`), NEVER `array`. This applies even if you are using PHP 8.4's asymmetric visibility (`public private(set)`).
+**2. Use typed arrays with DocBlocks instead of `DataCollection`**
+Spatie Laravel Data v4 supports native arrays typed via DocBlocks. This is the preferred C.O.R.E. way because it simplifies hydration, avoids immutability issues with `DataCollection`, and keeps the code cleaner. NEVER use `#[DataCollectionOf]` or `DataCollection`.
 
-❌ **Bad (Violates C.O.R.E. strict typing):**
+❌ **Bad (Cumbersome and violates new C.O.R.E. rules):**
 ```php
 class CognitiveContextDTO extends Data
 {
     public function __construct(
         #[DataCollectionOf(WorkerResultDTO::class)]
-        public private(set) array $telemetry = [], // ❌ NEVER USE array HERE
+        public private(set) ?DataCollection $telemetry = null,
     ) {}
-    
-    public function recordTelemetry(WorkerResultDTO $entry): self
-    {
-        $clone = clone $this;
-        $clone->telemetry[] = $entry; // ❌ Array append
-        return $clone;
-    }
 }
 ```
 
-✅ **Good (Strict DataCollection):**
+✅ **Good (Native typed arrays):**
 ```php
 class CognitiveContextDTO extends Data
 {
     public function __construct(
-        #[DataCollectionOf(WorkerResultDTO::class)]
-        public private(set) ?DataCollection $telemetry = null, // ✅ Use ?DataCollection
+        /** @var array<int, WorkerResultDTO> */
+        public private(set) array $telemetry = [],
     ) {}
     
     public function recordTelemetry(WorkerResultDTO $entry): self
     {
         $clone = clone $this;
-        $items = $this->telemetry?->items() ?? [];
-        $items[] = $entry;
-        $clone->telemetry = WorkerResultDTO::collection($items); // ✅ Rebuild collection
+        $clone->telemetry[] = $entry; // ✅ Simple array append works perfectly
         return $clone;
     }
 }

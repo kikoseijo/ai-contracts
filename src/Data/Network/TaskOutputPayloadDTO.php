@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Network;
 
-use Spatie\LaravelData\Data;
+use Sunnyface\Contracts\Data\Spoke\Payloads\BaseOutputPayloadData;
 
 /**
  * Representa la estructura del output_payload que devuelve el Hub.
  */
-final class TaskOutputPayloadDTO extends Data
+final class TaskOutputPayloadDTO extends BaseOutputPayloadData
 {
     public function __construct(
         public readonly ?string $response = null,

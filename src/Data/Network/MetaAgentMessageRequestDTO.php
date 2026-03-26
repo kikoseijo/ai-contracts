@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Network;
 
-use Spatie\LaravelData\Attributes\DataCollectionOf;
-use Spatie\LaravelData\DataCollection;
 use Spatie\LaravelData\Data;
 use Sunnyface\Contracts\Data\Spoke\Responses\ChatMessageDTO;
 
@@ -18,7 +16,7 @@ final class MetaAgentMessageRequestDTO extends Data
     public function __construct(
         public readonly string $tenant_id,
         public readonly string $message,
-        #[DataCollectionOf(ChatMessageDTO::class)]
-        public readonly DataCollection $history,
+        /** @var array<int, ChatMessageDTO>|null */
+        public readonly ?array $history = null,
     ) {}
 }

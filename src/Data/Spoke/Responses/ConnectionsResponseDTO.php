@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
-use Spatie\LaravelData\Attributes\DataCollectionOf;
-use Spatie\LaravelData\DataCollection;
 use Spatie\LaravelData\Data;
 
 /**
@@ -14,10 +12,10 @@ use Spatie\LaravelData\Data;
 final class ConnectionsResponseDTO extends Data
 {
     public function __construct(
-        #[DataCollectionOf(VaultConnectionItemDTO::class)]
-        public readonly DataCollection $vaults,
-        #[DataCollectionOf(AgentConnectionItemDTO::class)]
-        public readonly DataCollection $agents,
+        /** @var array<int, VaultConnectionItemDTO>|null */
+        public readonly ?array $vaults = null,
+        /** @var array<int, AgentConnectionItemDTO>|null */
+        public readonly ?array $agents = null,
     ) {}
 
 }

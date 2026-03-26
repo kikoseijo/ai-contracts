@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Extractor;
 
-use Spatie\LaravelData\Attributes\DataCollectionOf;
-use Spatie\LaravelData\DataCollection;
-use Spatie\LaravelData\Data;
+use Sunnyface\Contracts\Data\Spoke\Payloads\BaseOutputPayloadData;
 use Sunnyface\Contracts\Attributes\UI;
 use Sunnyface\Contracts\Data\FinancialExtraction\DocumentLineData;
 use Sunnyface\Contracts\Enums\UiComponent;
 
-class InvoiceOutputDTO extends Data
+class InvoiceOutputDTO extends BaseOutputPayloadData
 {
     public function __construct(
         #[UI(label: 'Vendor Name', component: UiComponent::Text)]
@@ -30,7 +28,7 @@ class InvoiceOutputDTO extends Data
         public readonly ?string $currency = null,
 
         #[UI(label: 'Line Items', component: UiComponent::Repeater)]
-        #[DataCollectionOf(DocumentLineData::class)]
-        public readonly ?DataCollection $line_items = null,
+        /** @var array<int, DocumentLineData>|null */
+        public readonly ?array $line_items = null,
     ) {}
 }

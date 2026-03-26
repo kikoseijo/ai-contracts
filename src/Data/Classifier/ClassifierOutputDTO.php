@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Classifier;
 
-use Spatie\LaravelData\Data;
+use Sunnyface\Contracts\Data\Spoke\Payloads\BaseOutputPayloadData;
 use Sunnyface\Contracts\Attributes\UI;
 use Sunnyface\Contracts\Enums\UiComponent;
 
-class ClassifierOutputDTO extends Data
+class ClassifierOutputDTO extends BaseOutputPayloadData
 {
     public function __construct(
         #[UI(label: 'Category', component: UiComponent::Text)]

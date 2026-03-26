@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\FinancialExtraction;
 
-use Spatie\LaravelData\Attributes\DataCollectionOf;
-use Spatie\LaravelData\DataCollection;
 use Spatie\LaravelData\Data;
 use Sunnyface\Contracts\Attributes\UI;
 use Sunnyface\Contracts\Enums\UiComponent;
@@ -53,8 +51,8 @@ class FinancialExtractionOutputDTO extends Data
         public readonly float $total,
 
         #[UI(label: 'Line Items', component: UiComponent::Table)]
-        #[DataCollectionOf(DocumentLineData::class)]
-        public readonly DataCollection $line_items,
+        /** @var array<int, DocumentLineData>|null */
+        public readonly ?array $line_items = null,
 
         #[UI(label: 'Confidence (0-100)', component: UiComponent::Number)]
         public readonly int $confidence_score,
