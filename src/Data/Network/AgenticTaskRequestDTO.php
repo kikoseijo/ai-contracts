@@ -27,7 +27,7 @@ final class AgenticTaskRequestDTO extends Data
         public readonly string $agent_id,
 
         #[Required]
-        public readonly ConversationalPayloadDTO|DocumentClassifierPayloadDTO|VisionExtractorPayloadDTO $input_payload,
+        public readonly \Sunnyface\Contracts\Data\Spoke\Payloads\BasePayloadData $input_payload,
 
         /** @var array<int, ChatMessageDTO>|null */
         public readonly ?array $prefetched_chat_messages = null,
