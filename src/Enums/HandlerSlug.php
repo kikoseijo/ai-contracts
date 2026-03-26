@@ -50,4 +50,6 @@ enum HandlerSlug: string
             ),
         };
     }
+    
+    // colors, badges, etc.
 }
