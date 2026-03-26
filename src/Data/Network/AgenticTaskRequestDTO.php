@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Network;
 
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Attributes\Validation\Required;
 use Spatie\LaravelData\Attributes\Validation\Ulid;
 use Spatie\LaravelData\Data;
@@ -19,16 +20,17 @@ use Sunnyface\Contracts\Data\Spoke\Payloads\VisionExtractorPayloadDTO;
  */
 final class AgenticTaskRequestDTO extends Data
 {
-    /**
-     * @param  array<int, \Sunnyface\Contracts\Data\Spoke\Responses\ChatMessageDTO>|null  $prefetched_chat_messages
-     */
     public function __construct(
         #[Required, Ulid]
         public readonly string $tenant_id,
+
         #[Required, Ulid]
         public readonly string $agent_id,
+
         #[Required]
-        public readonly ConversationalPayloadDTO|DocumentClassifierPayloadDTO|VisionExtractorPayloadDTO|array $input_payload,
-        public readonly ?array $prefetched_chat_messages = null,
+        public readonly ConversationalPayloadDTO|DocumentClassifierPayloadDTO|VisionExtractorPayloadDTO $input_payload,
+
+        #[DataCollectionOf(\Sunnyface\Contracts\Data\Spoke\Responses\ChatMessageDTO::class)]
+        public readonly ?\Spatie\LaravelData\DataCollection $prefetched_chat_messages = null,
     ) {}
 }
