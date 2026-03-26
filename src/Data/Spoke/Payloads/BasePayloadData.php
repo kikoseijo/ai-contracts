@@ -10,4 +10,7 @@ abstract class BasePayloadData extends Data
 {
     // Esta clase sirve como contrato polimórfico.
     // Todos los DTOs de payloads de Tasks deben extender de aquí.
+    
+    public ?string $source = null;
+    public ?string $channel = null;
 }
