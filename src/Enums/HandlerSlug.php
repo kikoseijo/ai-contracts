@@ -53,12 +53,12 @@ enum HandlerSlug: string
     public function color(): string
     {
         return match ($this) {
-            self::Talker, self::FinancialAdvisor, self::CustomsAdvisor => 'primary',
-            self::TextTranslator => 'info',
-            self::VisionExtractor, self::FinancialExtractor => 'warning',
-            self::DocumentClassifier => 'success',
-            self::MetaAgent => 'danger',
-            self::VaultIngest => 'gray',
+            self::Talker, self::FinancialAdvisor, self::CustomsAdvisor => 'blue',
+            self::TextTranslator => 'indigo',
+            self::VisionExtractor, self::FinancialExtractor => 'amber',
+            self::DocumentClassifier => 'emerald',
+            self::MetaAgent => 'rose',
+            self::VaultIngest => 'slate',
         };
     }
 }
