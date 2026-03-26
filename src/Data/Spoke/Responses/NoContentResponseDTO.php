@@ -6,7 +6,6 @@ namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
 use Spatie\LaravelData\Attributes\Hidden;
 use Spatie\LaravelData\Data;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Respuesta canónica HTTP 204 No Content para operaciones de eliminación exitosas.
@@ -18,8 +17,4 @@ final class NoContentResponseDTO extends Data
         public readonly bool $noop = true,
     ) {}
 
-    public function toResponse($request): Response
-    {
-        return response()->noContent();
-    }
 }

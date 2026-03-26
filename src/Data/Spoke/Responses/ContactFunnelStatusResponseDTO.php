@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
-use Illuminate\Http\JsonResponse;
 use Spatie\LaravelData\Data;
 use Sunnyface\Contracts\Enums\TaskStatus;
 
@@ -23,19 +22,7 @@ final class ContactFunnelStatusResponseDTO extends Data
         public readonly ?array $results = null,
         public readonly mixed $error = null,
     ) {}
-
-    public function toResponse($request): JsonResponse
-    {
-        if ($this->status === TaskStatus::Processing) {
-            $processingPayload = ['status' => $this->status->value];
-
-            return response()->json($processingPayload);
-        }
-
-        return response()->json($this);
-    }
-
-    /**
+/**
      * @return array{status: string, results: array<string, mixed>, error: mixed}
      */
     public function toArray(): array

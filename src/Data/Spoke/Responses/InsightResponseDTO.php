@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
-use Illuminate\Http\JsonResponse;
 use Spatie\LaravelData\Data;
 
 /**
@@ -16,8 +15,4 @@ final class InsightResponseDTO extends Data
         public readonly ?string $insight,
     ) {}
 
-    public function toResponse($request): JsonResponse
-    {
-        return response()->json($this, 200);
-    }
 }

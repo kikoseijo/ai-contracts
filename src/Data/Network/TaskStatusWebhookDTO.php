@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Sunnyface\Contracts\Data\Network;
 
 use Spatie\LaravelData\Attributes\DataCollectionOf;
+use Spatie\LaravelData\DataCollection;
 use Spatie\LaravelData\Data;
 use Sunnyface\Contracts\Data\Spoke\Responses\ChatMessageDTO;
 use Sunnyface\Contracts\Enums\TaskStatus;
@@ -37,7 +38,7 @@ final class TaskStatusWebhookDTO extends Data
         public readonly ?array $output_payload = null,
         public readonly array $metadata = [],
         #[DataCollectionOf(ChatMessageDTO::class)]
-        public readonly ?array $messages_history = null,
+        public readonly ?DataCollection $messages_history = null,
         public readonly ?array $telemetry_snapshot = null,
     ) {}
 }

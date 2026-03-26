@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
-use Illuminate\Http\JsonResponse;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
+use Spatie\LaravelData\DataCollection;
 use Spatie\LaravelData\Data;
 
 /**
@@ -16,14 +16,7 @@ final class ChatHistoryResponseDTO extends Data
 {
     public function __construct(
         #[DataCollectionOf(ChatMessageDTO::class)]
-        public readonly array $messages,
+        public readonly DataCollection $messages,
     ) {}
 
-    public function toResponse($request): JsonResponse
-    {
-        return response()->json(array_map(
-            static fn (ChatMessageDTO $msg): array => $msg->toArray(),
-            $this->messages,
-        ), 200);
-    }
 }

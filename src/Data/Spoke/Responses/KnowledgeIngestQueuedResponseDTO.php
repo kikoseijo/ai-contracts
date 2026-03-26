@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
-use Illuminate\Http\JsonResponse;
 use Spatie\LaravelData\Data;
 use Sunnyface\Contracts\Enums\DocumentStatus;
 
@@ -19,8 +18,4 @@ final class KnowledgeIngestQueuedResponseDTO extends Data
         public readonly DocumentStatus $status = DocumentStatus::Queued,
     ) {}
 
-    public function toResponse($request): JsonResponse
-    {
-        return response()->json($this, 202);
-    }
 }

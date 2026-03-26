@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
-use Illuminate\Http\JsonResponse;
 use Spatie\LaravelData\Data;
 
 /**
@@ -22,10 +21,6 @@ final class MagicDraftCreatedResponseDTO extends Data
         public readonly ?array $intent_analysis,
     ) {}
 
-    public function toResponse($request): JsonResponse
-    {
-        return response()->json($this, 200);
-    }
 
     /**
      * @return array{status: string, draft: array{suggested_name: string, suggested_greeting: string, custom_instructions: string, intent_analysis: array<string, mixed>|null}}

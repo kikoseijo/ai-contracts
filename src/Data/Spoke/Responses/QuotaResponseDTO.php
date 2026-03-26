@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
-use Illuminate\Http\JsonResponse;
 use Spatie\LaravelData\Data;
 
 /**
@@ -17,10 +16,6 @@ final class QuotaResponseDTO extends Data
         public readonly int $total_vaults_allowed,
     ) {}
 
-    public function toResponse($request): JsonResponse
-    {
-        return response()->json($this);
-    }
 
     /**
      * @return array{quota: array{available_tokens: int, total_vaults_allowed: int}}

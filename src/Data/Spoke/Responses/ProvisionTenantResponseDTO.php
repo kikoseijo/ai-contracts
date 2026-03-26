@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
-use Illuminate\Http\JsonResponse;
 use Spatie\LaravelData\Data;
 use Sunnyface\Contracts\Enums\SpokeOperationStatus;
 
@@ -20,8 +19,4 @@ final class ProvisionTenantResponseDTO extends Data
         public readonly ?string $default_vault_id = null,
     ) {}
 
-    public function toResponse($request): JsonResponse
-    {
-        return response()->json($this, 201);
-    }
 }

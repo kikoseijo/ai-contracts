@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
-use Illuminate\Http\JsonResponse;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
+use Spatie\LaravelData\DataCollection;
 use Spatie\LaravelData\Data;
 use Sunnyface\Contracts\Data\Network\VaultDocumentMetricDTO;
 
@@ -18,11 +18,7 @@ final class VaultVectorMetricsResponseDTO extends Data
     public function __construct(
         public readonly int $total_chunks,
         #[DataCollectionOf(VaultDocumentMetricDTO::class)]
-        public readonly array $documents,
+        public readonly DataCollection $documents,
     ) {}
 
-    public function toResponse($request): JsonResponse
-    {
-        return response()->json($this, 200);
-    }
 }

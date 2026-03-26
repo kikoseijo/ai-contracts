@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
-use Illuminate\Http\JsonResponse;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
+use Spatie\LaravelData\DataCollection;
 use Spatie\LaravelData\Data;
 
 /**
@@ -15,13 +15,9 @@ final class ConnectionsResponseDTO extends Data
 {
     public function __construct(
         #[DataCollectionOf(VaultConnectionItemDTO::class)]
-        public readonly array $vaults,
+        public readonly DataCollection $vaults,
         #[DataCollectionOf(AgentConnectionItemDTO::class)]
-        public readonly array $agents,
+        public readonly DataCollection $agents,
     ) {}
 
-    public function toResponse($request): JsonResponse
-    {
-        return response()->json($this, 200);
-    }
 }

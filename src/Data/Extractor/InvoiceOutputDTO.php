@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Sunnyface\Contracts\Data\Extractor;
 
 use Spatie\LaravelData\Attributes\DataCollectionOf;
+use Spatie\LaravelData\DataCollection;
 use Spatie\LaravelData\Data;
 use Sunnyface\Contracts\Attributes\UI;
 use Sunnyface\Contracts\Data\FinancialExtraction\DocumentLineData;
@@ -30,6 +31,6 @@ class InvoiceOutputDTO extends Data
 
         #[UI(label: 'Line Items', component: UiComponent::Repeater)]
         #[DataCollectionOf(DocumentLineData::class)]
-        public readonly ?array $line_items = null,
+        public readonly ?DataCollection $line_items = null,
     ) {}
 }

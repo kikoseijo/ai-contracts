@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
-use Illuminate\Http\JsonResponse;
 use Spatie\LaravelData\Data;
 use Sunnyface\Contracts\Enums\HandlerSlug;
 use Sunnyface\Contracts\Enums\SpokeOperationStatus;
@@ -22,8 +21,4 @@ final class AgentCreatedResponseDTO extends Data
         public readonly bool $is_active,
     ) {}
 
-    public function toResponse($request): JsonResponse
-    {
-        return response()->json($this, 201);
-    }
 }
