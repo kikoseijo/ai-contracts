@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
+use Illuminate\Http\JsonResponse;
 use Spatie\LaravelData\Data;
 use Sunnyface\Contracts\Enums\SpokeOperationStatus;
 use Sunnyface\Contracts\Data\Network\VaultItemDTO;
@@ -18,4 +19,13 @@ final class VaultCreatedResponseDTO extends Data
         public readonly VaultItemDTO $vault,
     ) {}
 
+    public function calculateResponseStatus(\Illuminate\Http\Request $request): int
+    {
+        return 201;
+    }
+
+    public function toResponse($request): JsonResponse
+    {
+        return response()->json($this, 201);
+    }
 }

@@ -19,9 +19,11 @@ final class TaskCreatedResponseDTO extends Data
         public readonly TaskStatus $status,
     ) {}
 
-    public function toResponse($request)
-    {
-        return response()->json($this, 202);
-    }
+    
 
+
+    public function calculateResponseStatus(\Illuminate\Http\Request $request): int
+    {
+        return 202;
+    }
 }

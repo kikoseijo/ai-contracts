@@ -19,4 +19,9 @@ final class ProvisionTenantResponseDTO extends Data
         public readonly ?string $default_vault_id = null,
     ) {}
 
+    public function calculateResponseStatus(\Illuminate\Http\Request $request): int
+    {
+        return 201;
+    }
+
 }

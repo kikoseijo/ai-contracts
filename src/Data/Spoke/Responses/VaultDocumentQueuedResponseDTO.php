@@ -18,9 +18,11 @@ final class VaultDocumentQueuedResponseDTO extends Data
         public readonly ?string $task_id,
     ) {}
 
-    public function toResponse($request)
-    {
-        return response()->json($this, 202);
-    }
+    
 
+
+    public function calculateResponseStatus(\Illuminate\Http\Request $request): int
+    {
+        return 202;
+    }
 }

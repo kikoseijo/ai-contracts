@@ -21,6 +21,11 @@ final class MagicDraftCreatedResponseDTO extends Data
         public readonly ?array $intent_analysis,
     ) {}
 
+    public function calculateResponseStatus(\Illuminate\Http\Request $request): int
+    {
+        return 201;
+    }
+
 
     /**
      * @return array{status: string, draft: array{suggested_name: string, suggested_greeting: string, custom_instructions: string, intent_analysis: array<string, mixed>|null}}

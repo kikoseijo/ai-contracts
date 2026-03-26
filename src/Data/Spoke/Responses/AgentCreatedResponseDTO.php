@@ -21,4 +21,8 @@ final class AgentCreatedResponseDTO extends Data
         public readonly bool $is_active,
     ) {}
 
+    public function calculateResponseStatus(\Illuminate\Http\Request $request): int
+    {
+        return 201;
+    }
 }

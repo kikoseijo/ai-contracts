@@ -13,4 +13,9 @@ final class WidgetRateLimitedResponseDTO extends Data
         public readonly string $message,
     ) {}
 
+
+    public function calculateResponseStatus(\Illuminate\Http\Request $request): int
+    {
+        return 429; // Rate Limited
+    }
 }

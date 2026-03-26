@@ -15,4 +15,9 @@ final class ContactFunnelQueuedResponseDTO extends Data
         public readonly SpokeOperationStatus $status,
     ) {}
 
+    public function calculateResponseStatus(\Illuminate\Http\Request $request): int
+    {
+        return 202;
+    }
+
 }

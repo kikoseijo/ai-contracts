@@ -20,4 +20,9 @@ final class HubJsonErrorResponseDTO extends Data
         #[Hidden]
         public readonly ?int $retry_after_seconds = null,
     ) {}
+
+    public function calculateResponseStatus(\Illuminate\Http\Request $request): int
+    {
+        return $this->httpStatus;
+    }
 }

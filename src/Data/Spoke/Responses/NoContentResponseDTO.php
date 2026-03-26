@@ -17,4 +17,9 @@ final class NoContentResponseDTO extends Data
         public readonly bool $noop = true,
     ) {}
 
+    public function calculateResponseStatus(\Illuminate\Http\Request $request): int
+    {
+        return 204;
+    }
+
 }

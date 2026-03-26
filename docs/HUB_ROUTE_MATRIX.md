@@ -110,6 +110,6 @@ Cuando un agente conversacional necesita datos en tiempo real del Satélite, el 
 |--------|---------------------|---------|-----------|
 | POST | `/api/webhooks/hub/tools` | `SpokeToolExecutionRequestDTO` | `SpokeToolExecutionResponseDTO` |
 
-El Spoke debe exponer este endpoint protegido por verificación de firma HMAC (`X-Hub-Signature`). La Action receptora enruta al tool handler correspondiente según `tool_name` y devuelve el resultado serializado en el DTO de respuesta.
+El Spoke debe exponer este endpoint protegido por verificación de firma HMAC (`X-Sunnyface-Signature`). La Action receptora enruta al tool handler correspondiente según `tool_name` y devuelve el resultado serializado en el DTO de respuesta.
 
 Ver `docs/HUB_SPOKE_HTTP_CONTRACT.md` y PHPDoc en cada DTO.

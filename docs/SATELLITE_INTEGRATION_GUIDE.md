@@ -129,7 +129,7 @@ Para facilitar la automatización, SunnyMatrix ofrece interfaces de entrada y sa
 
 - **Webhooks de Estado:** El Hub os notificará en tiempo real (a vuestro endpoint `/api/webhooks/hub`) cada vez que una tarea cambie de estado (`processing`, `completed`, `failed`). El DTO recibido será `TaskStatusWebhookDTO`.
 - **Webhooks de Extracción:** Cuando un `vision-extractor` termina, recibiréis el JSON estructurado directamente en vuestro webhook para que lo guardéis en vuestra base de datos (`ExtractionHubWebhookDTO`).
-- **Webhooks de Tools Dinámicas:** Cuando un agente conversacional necesita datos en tiempo real de vuestro sistema, el Hub envía una petición **síncrona** a vuestro endpoint `/api/webhooks/hub/tools`. Debéis exponer esta ruta protegida con verificación HMAC (`X-Hub-Signature`).
+- **Webhooks de Tools Dinámicas:** Cuando un agente conversacional necesita datos en tiempo real de vuestro sistema, el Hub envía una petición **síncrona** a vuestro endpoint `/api/webhooks/hub/tools`. Debéis exponer esta ruta protegida con verificación HMAC (`X-Sunnyface-Signature`).
 
 ---
 
@@ -137,7 +137,7 @@ Para facilitar la automatización, SunnyMatrix ofrece interfaces de entrada y sa
 
 Los agentes conversacionales pueden invocar "tools" definidas por el Satélite para consultar datos en tiempo real (ej. saldo de un cliente, facturas pendientes). El flujo es:
 
-1. El Hub envía un `POST` síncrono a `{spoke_url}/api/webhooks/hub/tools` con un `SpokeToolExecutionRequestDTO`.
+1. El Hub envía un `POST` síncrono a `{spoke_url}/api/webhooks/hub/tools` con un `SpokeToolExecutionRequestDTO`. Además, se incluyen las cabeceras `X-Sunnyface-Signature` y `X-Sunnyface-Event`.
 2. El Spoke identifica el `tool_name` y ejecuta la lógica de negocio correspondiente.
 3. El Spoke responde con un `SpokeToolExecutionResponseDTO` que incluye `success`, `data` (resultado serializado) y opcionalmente `error_message`.
 

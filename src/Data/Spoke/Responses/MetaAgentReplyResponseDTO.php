@@ -15,4 +15,9 @@ final class MetaAgentReplyResponseDTO extends Data
         public readonly string $reply,
     ) {}
 
+    public function calculateResponseStatus(\Illuminate\Http\Request $request): int
+    {
+        return 200;
+    }
+
 }

@@ -18,9 +18,11 @@ final class KnowledgeIngestQueuedResponseDTO extends Data
         public readonly DocumentStatus $status = DocumentStatus::Queued,
     ) {}
 
-    public function toResponse($request)
-    {
-        return response()->json($this, 202);
-    }
+    
 
+
+    public function calculateResponseStatus(\Illuminate\Http\Request $request): int
+    {
+        return 202;
+    }
 }
