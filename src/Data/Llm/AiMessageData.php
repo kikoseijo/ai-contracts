@@ -16,14 +16,9 @@ use Spatie\LaravelData\Data;
  */
 final class AiMessageData extends Data
 {
-    /** @var list<CitationDTO> */
-    #[DataCollectionOf(CitationDTO::class)]
-    public readonly DataCollection $citations;
-
     public function __construct(
         public readonly string $response,
-        CitationDTO ...$citations,
-    ) {
-        $this->citations = CitationDTO::collect(array_values($citations));
-    }
+        #[DataCollectionOf(CitationDTO::class)]
+        public readonly ?DataCollection $citations = null,
+    ) {}
 }

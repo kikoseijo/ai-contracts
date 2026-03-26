@@ -22,9 +22,14 @@ Tras cada `Http::` / `HubApiClient`:
 
 | Área | Namespace típico | Uso |
 |------|-------------------|-----|
-| Respuestas de dominio compartidas (listados, métricas, ítems) | `Sunnyface\Contracts\Data\Network\` | Cuerpo JSON 2xx con forma estable (ej. `VaultListResponseDTO`). |
-| Errores HTTP canónicos Hub→Spoke | `Sunnyface\Contracts\Data\Spoke\Responses\` | Sobre todo `ApiErrorResponseDTO` y envelopes específicos (widget, funnel, etc.). |
-| Requests / webhooks entrantes | `Sunnyface\Contracts\Data\Spoke\`, `...\Network\`, etc. | Validación y firma; no mezclar con respuestas. |
+| Respuestas de dominio compartidas (listados, métricas, webhooks) | `Sunnyface\Contracts\Data\Network\` | Cuerpo JSON 2xx con forma estable (ej. `VaultListResponseDTO`, `TaskCreatedResponseDTO`). Webhooks Hub→Spoke (`HubWebhookDTO`, `TaskStatusWebhookDTO`, etc.). |
+| Respuestas de éxito y error específicas | `Sunnyface\Contracts\Data\Spoke\Responses\` | `ApiErrorResponseDTO`, envelopes widget/funnel, listados (`AgentListResponseDTO`, `VaultListResponseDTO`). |
+| Requests / payloads de entrada | `Sunnyface\Contracts\Data\Spoke\` | Requests (`CreateAgentRequest`, `SpokeTenantIdRequest`). Payloads polimórficos en `...\Payloads\` (`ConversationalPayloadDTO`, `VisionExtractorPayloadDTO`, `DocumentClassifierPayloadDTO`). |
+| Configuración por tipo de agente | `Sunnyface\Contracts\Data\Agent\` | Configs tipados: `TalkerConfigData`, `TranslatorConfigData`, `ExtractorConfigData`, `ClassifierConfigData`. |
+| Resultados de procesamiento | `Sunnyface\Contracts\Data\Classifier\`, `...\Extractor\`, `...\Translator\`, `...\FinancialExtraction\` | DTOs de ejecución interna y output: `ClassifierOutputDTO`, `InvoiceOutputDTO`, `TranslatorOutputDTO`, `FinancialExtractionOutputDTO`. |
+| Motor cognitivo (pipeline) | `Sunnyface\Contracts\Data\Llm\` | `CognitiveContextDTO` (máquina de estados), `AiMessageData`, `WorkerResultDTO` (telemetría), `ToolExecutionDTO`. |
+| Gobernanza y métricas | `Sunnyface\Contracts\Data\Governance\`, `...\Metrics\` | `AgentInsightData`, `MonthlyBillingSummaryData`, `DailyUsageSummaryData`. |
+| Ingesta de documentos (Vault) | `Sunnyface\Contracts\Data\Vault\` | DTOs de entrada para ingestión: `IngestTextData`, `IngestFileData`. |
 
 **Importante:** un mismo endpoint puede devolver **200 con un DTO de negocio** o **404/422 con `ApiErrorResponseDTO`**. El Spoke debe ramificar por **status** y por **forma mínima del JSON** antes de hidratar.
 
@@ -70,15 +75,19 @@ return ApiErrorResponseDTO::from([
 
 O devuelve un union/`Result` interno; lo crítico es **no** mezclar arrays crudos después de este punto.
 
-## 6. Qué hace el Hub en código (referencia)
+## 6. Cómo responde el Hub (referencia)
 
-Los controladores devuelven instancias de DTO que extienden `Spatie\LaravelData\Data` y sobrescriben `toResponse()` con:
+Los DTOs extienden `Spatie\LaravelData\Data` e implementan la interfaz `Responsable` de Laravel. Los controladores **nunca** llaman a `response()->json()` manualmente; retornan el DTO directamente y Laravel invoca `toResponse()` del propio DTO:
 
 ```php
-return response()->json($this, $codigo);
+// Controlador del Hub — patrón correcto
+public function index(SpokeTenantIdRequest $request): VaultListResponseDTO|ApiErrorResponseDTO
+{
+    return $this->listVaultsAction->execute($request->tenant());
+}
 ```
 
-Eso define la forma del JSON que el Spoke debe reversar con `::from()`.
+El DTO gestiona su propio código HTTP y serialización JSON a través de `toResponse()`. Eso define la forma del JSON que el Spoke debe reversar con `::from()`.
 
 ## 7. PHP en el Hub: union de tipos en controladores
 

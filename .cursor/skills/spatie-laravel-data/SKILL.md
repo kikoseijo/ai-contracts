@@ -149,6 +149,38 @@ class CognitiveContextDTO extends Data
 }
 ```
 
+**3. DO NOT use variadic parameters (`...$items`) or manual logic in DTO constructors.**
+C.O.R.E. DTOs are pure data structures. Using variadic parameters or manual assignment logic in the constructor breaks Spatie Laravel Data's `::from()` hydration from JSON payloads.
+
+❌ **Bad (Breaks JSON hydration):**
+```php
+class AiMessageData extends Data
+{
+    #[DataCollectionOf(CitationDTO::class)]
+    public readonly DataCollection $citations;
+
+    public function __construct(
+        public readonly string $response,
+        CitationDTO ...$citations, // ❌ Variadic parameter
+    ) {
+        // ❌ Manual logic in constructor
+        $this->citations = CitationDTO::collect(array_values($citations), DataCollection::class);
+    }
+}
+```
+
+✅ **Good (Pure promoted properties):**
+```php
+class AiMessageData extends Data
+{
+    public function __construct(
+        public readonly string $response,
+        #[DataCollectionOf(CitationDTO::class)]
+        public readonly ?DataCollection $citations = null, // ✅ Promoted property
+    ) {}
+}
+```
+
 ## Advanced: Custom Base Data Classes
 If you need custom functionality, you can build your own base data class using Spatie's traits and interfaces (e.g., `ResponsableData`, `IncludeableData`, `TransformableData`, `ValidateableData`).
 

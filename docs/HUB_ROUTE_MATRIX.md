@@ -31,7 +31,7 @@
 | PUT | `/agents/{id}` | `AgentController@update` | `UpdateAgentRequest` | `AgentUpdatedResponseDTO` |
 | PUT | `/agents/{id}/toggle` | `AgentController@toggle` | `ToggleAgentRequest` | `AgentToggledResponseDTO` |
 | PUT | `/agents/{id}/extractor-config` | `AgentController@updateExtractorConfig` | `UpdateExtractorConfigRequest` | `AgentExtractorConfigResponseDTO` |
-| PUT | `/agents/{id}/config` | `AgentController@updateConfig` | `UpdateSpokeAgentConfigRequest` | `AgentConfigUpdatedResponseDTO` |
+| PUT | `/agents/{id}/config` | `AgentController@updateConfig` | `UpdateAgentConfigRequestDTO` (`Network\`) | `AgentConfigUpdatedResponseDTO` |
 | POST | `/agents/{id}/approve-inspector-schema` | `AgentController@approveInspectorSchema` | `ApproveInspectorSchemaRequest` | `AgentExtractorConfigResponseDTO` |
 | POST | `/agents/{id}/execute` | `ExecuteAgentTaskController@store` | `ExecuteAgentTaskRequest` | `TaskCreatedResponseDTO` (`Network\`, tarea worker) |
 | GET | `/agents/{tenant_agent_id}/chat-history` | `ChatHistoryController@show` | `SpokeTenantIdRequest` | `ChatHistoryResponseDTO` |
@@ -41,6 +41,7 @@
 | GET | `/quota` | `QuotaController@show` | `SpokeTenantIdRequest` | `QuotaResponseDTO` |
 | POST | `/quota/top-up` | `QuotaController@topUp` | `TopUpQuotaRequest` | `QuotaTopUpResponseDTO` |
 | GET | `/schemas` | `SchemaController@index` | `SchemaIndexRequest` | `SchemaListResponseDTO` |
+| GET | `/tasks/status` | `TaskStatusController@index` | `ids` (query, comma-separated ULIDs) | `BulkTaskStatusResponseDTO` |
 | GET | `/meta-agent/insight` | `InsightController@show` | `SpokeTenantIdRequest` | `InsightResponseDTO` |
 | POST | `/meta-agent/chat` | `MetaAgentController@chat` | `MetaAgentChatRequest` | `MetaAgentReplyResponseDTO` |
 
@@ -52,8 +53,8 @@
 |--------|------|-------------|---------|---------------------|
 | POST | `/tasks` | `TaskIngestionController` | `IngestAgentTaskRequest` | `TaskCreatedResponseDTO` |
 | POST | `/agents/{tenant_agent_id}/execute` | `AgentGatewayController@handle` | `Request` (sin Form Request dedicado) | `ApiErrorResponseDTO` (gateway aún no ejecuta flujo completo) |
-| POST | `/vault/ingest/text` | `VaultIngestionController@ingestPost` | `HubIngestTextData` | `VaultDocumentEnqueuedResponseDTO` |
-| POST | `/vault/ingest/file` | `VaultIngestionController@ingestFile` | `HubIngestFileData` | `VaultDocumentEnqueuedResponseDTO` |
+| POST | `/vault/ingest/text` | `VaultIngestionController@ingestPost` | `IngestTextData` | `VaultDocumentQueuedResponseDTO` |
+| POST | `/vault/ingest/file` | `VaultIngestionController@ingestFile` | `IngestFileData` | `VaultDocumentQueuedResponseDTO` |
 
 ---
 
@@ -88,7 +89,27 @@
 
 | DTO | Uso |
 |-----|-----|
-| `HubWebhookDTO` | Tareas (`TaskStatus`, `WebhookEvent`) | 
+| `HubWebhookDTO` | Tareas (`TaskStatus`, `WebhookEvent`) |
 | `ExtractionHubWebhookDTO` | Extracción (`DocumentStatus`) |
+| `TaskStatusWebhookDTO` | Notificación de estado de tarea (`processing`, `completed`, `failed`) |
+| `SunnyGestorWebhookDTO` | Payload específico de SunnyGestor (contiene `SunnyGestorItemDTO[]`) |
+| `QuotaUpdatedWebhookDTO` | Notificación de cambio de cuota del tenant |
+| `SchemaDiscoveredWebhookDTO` | Notificación de nuevo esquema descubierto por inspector |
+| `VaultDocumentIndexedWebhookDTO` | Confirmación de documento indexado en bóveda |
+| `VaultDocumentWebhookDTO` | Eventos genéricos de documento de bóveda |
+| `AiUsageSpokeWebhookDTO` | Telemetría de consumo de IA por tenant |
+| `TenantTaskCompletedWebhookDTO` | Tarea completada con payload final (`TenantTaskCompletedPayloadWebhookDTO`) |
+
+---
+
+## Webhooks entrantes Spoke → Hub (Tools Dinámicas)
+
+Cuando un agente conversacional necesita datos en tiempo real del Satélite, el Hub envía una petición síncrona al endpoint de tools del Spoke.
+
+| Método | Ruta (en el Spoke) | Entrada | Respuesta |
+|--------|---------------------|---------|-----------|
+| POST | `/api/webhooks/hub/tools` | `SpokeToolExecutionRequestDTO` | `SpokeToolExecutionResponseDTO` |
+
+El Spoke debe exponer este endpoint protegido por verificación de firma HMAC (`X-Hub-Signature`). La Action receptora enruta al tool handler correspondiente según `tool_name` y devuelve el resultado serializado en el DTO de respuesta.
 
 Ver `docs/HUB_SPOKE_HTTP_CONTRACT.md` y PHPDoc en cada DTO.
