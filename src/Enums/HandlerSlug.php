@@ -59,6 +59,7 @@ enum HandlerSlug: string
             self::DocumentClassifier => 'emerald',
             self::MetaAgent => 'rose',
             self::VaultIngest => 'slate',
+            default => 'gray',
         };
     }
 }
