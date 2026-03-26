@@ -48,6 +48,12 @@ Todo DTO en este paquete debe seguir esta estructura exacta:
 - **DTOs:** Sufijo obligatorio `DTO` o `Data` (ej. `AgenticTaskRequestDTO`).
 - **Enums:** Todos los Enums deben ser de respaldo (Backed Enums, ej. `: string`). Sus casos DEBEN escribirse en **PascalCase** (ej. `TaskStatus::Completed`, NO `TaskStatus::COMPLETED`).
 
+### 5. Política de Versionado (SemVer Estricto)
+
+Cualquier cambio en la firma de un DTO (añadir, quitar o renombrar propiedades) DEBE seguir la política de versionado híbrida. 
+- **NUNCA** hagas un Breaking Change sin planificar un salto de versión MAJOR.
+- **Lee la política completa en:** `docs/versioning-policy.md`
+
 ----------
 
 ## 🏆 THE GOLDEN EXAMPLE (Referencia de Código Perfecto)
