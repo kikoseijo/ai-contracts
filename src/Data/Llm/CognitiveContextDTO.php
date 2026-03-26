@@ -47,7 +47,7 @@ final class CognitiveContextDTO extends Data
         public private(set) TaskStatus $status = TaskStatus::Pending,
 
         /** Payload de entrada tal como lo envió el Spoke. */
-        public private(set) array $inputPayload = [],
+        public private(set) array|\Sunnyface\Contracts\Data\Spoke\Payloads\BasePayloadData $inputPayload = [],
 
         /** Payload de salida construido por los Pipes. Se escribirá en Task::output_payload. */
         public private(set) array $outputPayload = [],
@@ -117,7 +117,7 @@ final class CognitiveContextDTO extends Data
         string $tenantId,
         string $tenantAgentId,
         HandlerSlug $handlerSlug,
-        array $inputPayload = [],
+        array|\Sunnyface\Contracts\Data\Spoke\Payloads\BasePayloadData $inputPayload = [],
         ?string $chatSessionId = null,
         array $prefetchedChatMessages = [],
     ): self {
@@ -150,8 +150,7 @@ final class CognitiveContextDTO extends Data
         return $clone;
     }
 
-    /** @param array<string, mixed> $payload */
-    public function withInputPayload(array $payload): self
+    public function withInputPayload(array|\Sunnyface\Contracts\Data\Spoke\Payloads\BasePayloadData $payload): self
     {
         $clone = clone $this;
         $clone->inputPayload = $payload;

@@ -7,7 +7,9 @@ namespace Sunnyface\Contracts\Data\Spoke\Payloads;
 use Spatie\LaravelData\Attributes\Validation\Required;
 use Spatie\LaravelData\Data;
 
-final class ConversationalPayloadDTO extends Data
+use Sunnyface\Contracts\Data\Spoke\Payloads\BasePayloadData;
+
+final class ConversationalPayloadDTO extends BasePayloadData
 {
     public function __construct(
         #[Required]

@@ -6,7 +6,9 @@ namespace Sunnyface\Contracts\Data\Spoke\Payloads;
 
 use Spatie\LaravelData\Data;
 
-final class VisionExtractorPayloadDTO extends Data
+use Sunnyface\Contracts\Data\Spoke\Payloads\BasePayloadData;
+
+final class VisionExtractorPayloadDTO extends BasePayloadData
 {
     public function __construct(
         public readonly ?string $file_url = null,
