@@ -14,6 +14,7 @@ enum HandlerSlug: string
     case TextTranslator = 'text-translator';
     case VisionExtractor = 'vision-extractor';
     case DocumentClassifier = 'document-classifier';
+    case FinancialExtractor = 'financial-extractor';
     case MetaAgent = 'meta-agent';
     case VaultIngest = 'vault.ingest';
 
@@ -26,6 +27,7 @@ enum HandlerSlug: string
             self::TextTranslator => 'Traductor de Texto',
             self::VisionExtractor => 'Extractor Visual',
             self::DocumentClassifier => 'Clasificador de Documentos',
+            self::FinancialExtractor => 'Extractor Financiero',
             self::MetaAgent => 'Meta-Agente del Sistema',
             self::VaultIngest => 'Ingesta de Bóveda',
         };
@@ -42,7 +44,7 @@ enum HandlerSlug: string
             self::Talker, self::CustomsAdvisor, self::FinancialAdvisor, self::MetaAgent, self::TextTranslator => new UiManifestData(
                 components: [AgentComponent::Chat, AgentComponent::BitacoraWidget],
             ),
-            self::VisionExtractor, self::DocumentClassifier => new UiManifestData(
+            self::VisionExtractor, self::DocumentClassifier, self::FinancialExtractor => new UiManifestData(
                 components: [AgentComponent::ExtractorForm, AgentComponent::BitacoraWidget, AgentComponent::StatusBadge],
             ),
             self::VaultIngest => new UiManifestData(
