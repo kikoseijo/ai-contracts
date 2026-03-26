@@ -21,7 +21,7 @@ final class ProvisionTenantResponseDTO extends Data
 
     public function calculateResponseStatus(\Illuminate\Http\Request $request): int
     {
-        return 201;
+        return 201; // Tenant Created
     }
 
 }

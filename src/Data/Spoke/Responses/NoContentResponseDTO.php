@@ -19,7 +19,7 @@ final class NoContentResponseDTO extends Data
 
     public function calculateResponseStatus(\Illuminate\Http\Request $request): int
     {
-        return 204;
+        return 204; // No Content
     }
 
 }

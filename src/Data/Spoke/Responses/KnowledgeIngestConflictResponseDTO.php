@@ -20,6 +20,6 @@ final class KnowledgeIngestConflictResponseDTO extends Data
 
     public function calculateResponseStatus(\Illuminate\Http\Request $request): int
     {
-        return 409;
+        return 409; // Conflict
     }
 }

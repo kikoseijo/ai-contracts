@@ -20,6 +20,6 @@ final class VaultCreatedResponseDTO extends Data
 
     public function calculateResponseStatus(\Illuminate\Http\Request $request): int
     {
-        return 201;
+        return 201; // Vault Created
     }
 }

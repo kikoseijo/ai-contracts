@@ -23,6 +23,6 @@ final class ApiErrorResponseDTO extends Data
 
     public function calculateResponseStatus(\Illuminate\Http\Request $request): int
     {
-        return $this->httpStatus;
+        return $this->httpStatus; // HTTP Status Code
     }
 }

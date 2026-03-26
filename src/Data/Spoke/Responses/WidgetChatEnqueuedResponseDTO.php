@@ -14,7 +14,7 @@ final class WidgetChatEnqueuedResponseDTO extends Data
 
     public function calculateResponseStatus(\Illuminate\Http\Request $request): int
     {
-        return 202;
+        return 202; // Task Enqueued
     }
 
 }
