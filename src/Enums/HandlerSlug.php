@@ -53,5 +53,15 @@ enum HandlerSlug: string
         };
     }
     
-    // colors, badges, etc.
+    public function color(): string
+    {
+        return match ($this) {
+            self::Talker, self::FinancialAdvisor, self::CustomsAdvisor => 'primary',
+            self::TextTranslator => 'info',
+            self::VisionExtractor, self::FinancialExtractor => 'warning',
+            self::DocumentClassifier => 'success',
+            self::MetaAgent => 'danger',
+            self::VaultIngest => 'gray',
+        };
+    }
 }
