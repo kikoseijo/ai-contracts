@@ -19,6 +19,9 @@ use Sunnyface\Contracts\Data\Spoke\Payloads\VisionExtractorPayloadDTO;
  */
 final class AgenticTaskRequestDTO extends Data
 {
+    /**
+     * @param  array<int, \Sunnyface\Contracts\Data\Spoke\Responses\ChatMessageDTO>|null  $prefetched_chat_messages
+     */
     public function __construct(
         #[Required, Ulid]
         public readonly string $tenant_id,
@@ -26,5 +29,6 @@ final class AgenticTaskRequestDTO extends Data
         public readonly string $agent_id,
         #[Required]
         public readonly ConversationalPayloadDTO|DocumentClassifierPayloadDTO|VisionExtractorPayloadDTO|array $input_payload,
+        public readonly ?array $prefetched_chat_messages = null,
     ) {}
 }
