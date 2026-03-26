@@ -6,6 +6,7 @@ namespace Sunnyface\Contracts\Data\Llm;
 
 use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\DataCollection;
 use Sunnyface\Contracts\Contracts\CognitiveStateContract;
 use Sunnyface\Contracts\Enums\HandlerSlug;
 use Sunnyface\Contracts\Enums\TaskStatus;
@@ -68,16 +69,16 @@ final class CognitiveContextDTO extends Data
         public private(set) array $retrievedContextText = [],
 
         #[DataCollectionOf(WorkerResultDTO::class)]
-        public private(set) array $telemetry = [],
+        public private(set) ?DataCollection $telemetry = null,
 
         /**
          * Traza de ejecución de herramientas (tool calling) para auditoría / Panóptico.
          * Persistido en Task::tool_executions al hacer flush.
          *
-         * @var array<int, ToolExecutionDTO>
+         * @var DataCollection<int, ToolExecutionDTO>|null
          */
         #[DataCollectionOf(ToolExecutionDTO::class)]
-        public private(set) array $toolExecutions = [],
+        public private(set) ?DataCollection $toolExecutions = null,
 
         /**
          * Historial de chat precargado por el Job (formato OpenAI), antes del pipeline.
@@ -88,7 +89,7 @@ final class CognitiveContextDTO extends Data
         public private(set) array $prefetchedChatMessages = [],
 
         #[DataCollectionOf(LedgerEntryDTO::class)]
-        public private(set) array $statusLedger = [],
+        public private(set) ?DataCollection $statusLedger = null,
 
         /** Detalles del error si el pipeline falla. Se escribirá en Task::error_details. */
         public private(set) ?array $errorDetails = null,
@@ -130,7 +131,7 @@ final class CognitiveContextDTO extends Data
             inputPayload: $inputPayload,
             chatSessionId: $chatSessionId,
             prefetchedChatMessages: $prefetchedChatMessages,
-            statusLedger: [new LedgerEntryDTO(status: 'Pending', timestamp: $now, duration_ms: 0.0)],
+            statusLedger: LedgerEntryDTO::collection([new LedgerEntryDTO(status: 'Pending', timestamp: $now, duration_ms: 0.0)]),
         );
     }
 
@@ -199,7 +200,9 @@ final class CognitiveContextDTO extends Data
     public function recordTelemetry(WorkerResultDTO $entry): self
     {
         $clone = clone $this;
-        $clone->telemetry[] = $entry;
+        $items = $this->telemetry?->items() ?? [];
+        $items[] = $entry;
+        $clone->telemetry = WorkerResultDTO::collection($items);
 
         return $clone;
     }
@@ -207,7 +210,9 @@ final class CognitiveContextDTO extends Data
     public function addToolExecution(ToolExecutionDTO $execution): self
     {
         $clone = clone $this;
-        $clone->toolExecutions = [...$this->toolExecutions, $execution];
+        $items = $this->toolExecutions?->items() ?? [];
+        $items[] = $execution;
+        $clone->toolExecutions = ToolExecutionDTO::collection($items);
 
         return $clone;
     }
@@ -237,15 +242,16 @@ final class CognitiveContextDTO extends Data
     }
 
     /**
-     * @param  array<int, LedgerEntryDTO|array<string, mixed>>  $entries
+     * @param  array<int, LedgerEntryDTO|array<string, mixed>>|DataCollection  $entries
      */
-    public function withStatusLedger(array $entries): self
+    public function withStatusLedger(array|DataCollection $entries): self
     {
         $clone = clone $this;
-        $clone->statusLedger = array_map(
+        $items = $entries instanceof DataCollection ? $entries->items() : $entries;
+        $clone->statusLedger = LedgerEntryDTO::collection(array_map(
             static fn (LedgerEntryDTO|array $entry): LedgerEntryDTO => $entry instanceof LedgerEntryDTO ? $entry : LedgerEntryDTO::from($entry),
-            $entries,
-        );
+            $items,
+        ));
 
         return $clone;
     }
@@ -264,12 +270,12 @@ final class CognitiveContextDTO extends Data
     }
 
     /**
-     * @return array<int, LedgerEntryDTO>
+     * @return DataCollection
      */
-    private function appendLedgerEntry(TaskStatus $newStatus): array
+    private function appendLedgerEntry(TaskStatus $newStatus): DataCollection
     {
         $now = microtime(true);
-        $ledger = $this->statusLedger;
+        $ledger = $this->statusLedger?->items() ?? [];
         $durationMs = 0.0;
         if ($ledger !== []) {
             $lastKey = array_key_last($ledger);
@@ -288,7 +294,7 @@ final class CognitiveContextDTO extends Data
             duration_ms: $durationMs,
         );
 
-        return $ledger;
+        return LedgerEntryDTO::collection($ledger);
     }
 
     /**
@@ -315,7 +321,7 @@ final class CognitiveContextDTO extends Data
     {
         return (int) array_sum(array_map(
             static fn (WorkerResultDTO $entry): int => $entry->tokensIn,
-            $this->telemetry,
+            $this->telemetry?->items() ?? [],
         ));
     }
 
@@ -323,7 +329,7 @@ final class CognitiveContextDTO extends Data
     {
         return (int) array_sum(array_map(
             static fn (WorkerResultDTO $entry): int => $entry->tokensOut,
-            $this->telemetry,
+            $this->telemetry?->items() ?? [],
         ));
     }
 }

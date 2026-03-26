@@ -78,7 +78,7 @@ class PostData extends Data
 
 ## Anti-Patterns & Best Practices
 
-**DO NOT manually implement `toResponse` for basic JSON responses.**
+**1. DO NOT manually implement `toResponse` for basic JSON responses.**
 Spatie Laravel Data objects automatically implement `Responsable` (via the `ResponsableData` trait in the base `Data` class). Returning a `Data` object from a controller automatically converts it to a JSON response. 
 
 ❌ **Bad (Redundant):**
@@ -105,6 +105,47 @@ class AgentListResponseDTO extends Data
         public readonly DataCollection $agents,
     ) {}
     // ✅ Just return the DTO from your controller, Laravel Data handles the response automatically
+}
+```
+
+**2. DO NOT use raw arrays with `#[DataCollectionOf]`**
+When using `#[DataCollectionOf]`, the property type MUST be `DataCollection` (or `?DataCollection`), NEVER `array`. This applies even if you are using PHP 8.4's asymmetric visibility (`public private(set)`).
+
+❌ **Bad (Violates C.O.R.E. strict typing):**
+```php
+class CognitiveContextDTO extends Data
+{
+    public function __construct(
+        #[DataCollectionOf(WorkerResultDTO::class)]
+        public private(set) array $telemetry = [], // ❌ NEVER USE array HERE
+    ) {}
+    
+    public function recordTelemetry(WorkerResultDTO $entry): self
+    {
+        $clone = clone $this;
+        $clone->telemetry[] = $entry; // ❌ Array append
+        return $clone;
+    }
+}
+```
+
+✅ **Good (Strict DataCollection):**
+```php
+class CognitiveContextDTO extends Data
+{
+    public function __construct(
+        #[DataCollectionOf(WorkerResultDTO::class)]
+        public private(set) ?DataCollection $telemetry = null, // ✅ Use ?DataCollection
+    ) {}
+    
+    public function recordTelemetry(WorkerResultDTO $entry): self
+    {
+        $clone = clone $this;
+        $items = $this->telemetry?->items() ?? [];
+        $items[] = $entry;
+        $clone->telemetry = WorkerResultDTO::collection($items); // ✅ Rebuild collection
+        return $clone;
+    }
 }
 ```
 
