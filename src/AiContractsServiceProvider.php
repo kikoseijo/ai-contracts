@@ -15,6 +15,10 @@ class AiContractsServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Publicación de configuraciones si el paquete crece
+        $this->loadTranslationsFrom(__DIR__.'/../lang', 'ai-contracts');
+
+        $this->publishes([
+            __DIR__.'/../lang' => $this->app->langPath('vendor/ai-contracts'),
+        ], 'ai-contracts-translations');
     }
 }

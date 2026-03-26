@@ -20,17 +20,14 @@ enum HandlerSlug: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::Talker => 'Conversacional (Talker)',
-            self::FinancialAdvisor => 'Asesor Financiero (Agentic)',
-            self::CustomsAdvisor => 'Asesor de Aduanas (Agentic)',
-            self::TextTranslator => 'Traductor de Texto',
-            self::VisionExtractor => 'Extractor Visual',
-            self::DocumentClassifier => 'Clasificador de Documentos',
-            self::FinancialExtractor => 'Extractor Financiero',
-            self::MetaAgent => 'Meta-Agente del Sistema',
-            self::VaultIngest => 'Ingesta de Bóveda',
-        };
+        $key = str_replace('.', '-', $this->value);
+        return trans("ai-contracts::enums.handlers.{$key}.label");
+    }
+
+    public function description(): string
+    {
+        $key = str_replace('.', '-', $this->value);
+        return trans("ai-contracts::enums.handlers.{$key}.description");
     }
 
     public function isWorker(): bool
