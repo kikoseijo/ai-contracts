@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\DataCollection;
 use Sunnyface\Contracts\Data\Spoke\AgentSummaryData;
 /**
  * Envelope de respuesta para el listado de agentes de un tenant.
@@ -12,7 +14,7 @@ use Sunnyface\Contracts\Data\Spoke\AgentSummaryData;
 final class AgentListResponseDTO extends Data
 {
     public function __construct(
-        /** @var array<int, AgentSummaryData>|null */
-        public readonly ?array $agents = null,
+        #[DataCollectionOf(AgentSummaryData::class)]
+        public readonly ?DataCollection $agents = null,
     ) {}
 }

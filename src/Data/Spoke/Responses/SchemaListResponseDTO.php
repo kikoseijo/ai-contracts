@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\DataCollection;
 
 /**
  * Respuesta canónica al listar los TaskSchemas disponibles para un handler.
@@ -12,8 +14,8 @@ use Spatie\LaravelData\Data;
 final class SchemaListResponseDTO extends Data
 {
     public function __construct(
-        /** @var array<int, TaskSchemaItemDTO>|null */
-        public readonly ?array $schemas = null,
+        #[DataCollectionOf(TaskSchemaItemDTO::class)]
+        public readonly ?DataCollection $schemas = null,
     ) {}
 
 }

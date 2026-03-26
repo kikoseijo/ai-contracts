@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Network;
 
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Attributes\Validation\Required;
 use Spatie\LaravelData\Attributes\Validation\Ulid;
 use Spatie\LaravelData\Data;
-use Sunnyface\Contracts\Data\Spoke\Payloads\ConversationalPayloadDTO;
-use Sunnyface\Contracts\Data\Spoke\Payloads\DocumentClassifierPayloadDTO;
-use Sunnyface\Contracts\Data\Spoke\Payloads\VisionExtractorPayloadDTO;
+use Spatie\LaravelData\DataCollection;
+use Sunnyface\Contracts\Data\Spoke\Payloads\BasePayloadData;
 use Sunnyface\Contracts\Data\Spoke\Responses\ChatMessageDTO;
+
 /**
  * Envelope canónico que cruza la frontera Spoke→Hub para iniciar una tarea.
  *
@@ -27,9 +28,9 @@ final class AgenticTaskRequestDTO extends Data
         public readonly string $agent_id,
 
         #[Required]
-        public readonly \Sunnyface\Contracts\Data\Spoke\Payloads\BasePayloadData $input_payload,
+        public readonly BasePayloadData $input_payload,
 
-        /** @var array<int, ChatMessageDTO>|null */
-        public readonly ?array $prefetched_chat_messages = null,
+        #[DataCollectionOf(ChatMessageDTO::class)]
+        public readonly ?DataCollection $prefetched_chat_messages = null,
     ) {}
 }

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\DataCollection;
 
 /**
  * Respuesta canónica del endpoint de historial de chat de un agente Talker.
@@ -13,8 +15,8 @@ use Spatie\LaravelData\Data;
 final class ChatHistoryResponseDTO extends Data
 {
     public function __construct(
-        /** @var array<int, ChatMessageDTO>|null */
-        public readonly ?array $messages = null,
+        #[DataCollectionOf(ChatMessageDTO::class)]
+        public readonly ?DataCollection $messages = null,
     ) {}
 
 }

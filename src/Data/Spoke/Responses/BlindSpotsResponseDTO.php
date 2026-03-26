@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\DataCollection;
 
 /**
  * Respuesta canónica del endpoint BlindSpots: últimas tareas fallidas de un tenant.
@@ -12,8 +14,8 @@ use Spatie\LaravelData\Data;
 final class BlindSpotsResponseDTO extends Data
 {
     public function __construct(
-        /** @var array<int, BlindSpotItemDTO>|null */
-        public readonly ?array $blind_spots = null,
+        #[DataCollectionOf(BlindSpotItemDTO::class)]
+        public readonly ?DataCollection $blind_spots = null,
     ) {}
 
 }

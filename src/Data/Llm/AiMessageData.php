@@ -15,8 +15,8 @@ use Spatie\LaravelData\Data;
 final class AiMessageData extends Data
 {
     public function __construct(
-        public readonly string $response,
+        public private(set) string $response,
         /** @var array<int, CitationDTO>|null */
-        public readonly ?array $citations = null,
+        public private(set) ?array $citations = null,
     ) {}
 }

@@ -11,7 +11,8 @@
   },
   "autoload": {
     "psr-4": {
-      "Sunnyface\\Contracts\\": "src/"
+      "Sunnyface\\Contracts\\": "src/",
+      "Sunnyface\\AiContracts\\Support\\": "src/Support/"
     }
   },
   "extra": {

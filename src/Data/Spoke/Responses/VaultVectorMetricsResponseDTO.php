@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\DataCollection;
 use Sunnyface\Contracts\Data\Network\VaultDocumentMetricDTO;
 
 /**
@@ -15,8 +17,8 @@ final class VaultVectorMetricsResponseDTO extends Data
 {
     public function __construct(
         public readonly int $total_chunks,
-        /** @var array<int, VaultDocumentMetricDTO>|null */
-        public readonly ?array $documents = null,
+        #[DataCollectionOf(VaultDocumentMetricDTO::class)]
+        public readonly ?DataCollection $documents = null,
     ) {}
 
 }

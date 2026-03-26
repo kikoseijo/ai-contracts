@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\DataCollection;
 use Sunnyface\Contracts\Enums\HandlerSlug;
 
 /**
@@ -20,9 +22,9 @@ final class AgentConnectionItemDTO extends Data
         public readonly ?string $knowledge_vault_id,
         public readonly ?string $magic_email,
         public readonly string $rest_api_url,
-        /** @var array<int, EgressWebhookItemDTO>|null */
-        public readonly ?array $egress_webhooks = null,
-        /** @var array<int, EgressLogItemDTO>|null */
-        public readonly ?array $recent_egress_logs = null,
+        #[DataCollectionOf(EgressWebhookItemDTO::class)]
+        public readonly ?DataCollection $egress_webhooks = null,
+        #[DataCollectionOf(EgressLogItemDTO::class)]
+        public readonly ?DataCollection $recent_egress_logs = null,
     ) {}
 }

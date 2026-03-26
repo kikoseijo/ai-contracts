@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Spoke\Responses;
 
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\DataCollection;
 use Sunnyface\Contracts\Enums\TaskStatus;
 
 final class WidgetTaskStatusResponseDTO extends Data
 {
     public function __construct(
         public readonly TaskStatus $status,
-        /** @var array<int, ChatMessageDTO>|null */
-        public readonly ?array $messages = null,
+        #[DataCollectionOf(ChatMessageDTO::class)]
+        public readonly ?DataCollection $messages = null,
     ) {}
 
 }

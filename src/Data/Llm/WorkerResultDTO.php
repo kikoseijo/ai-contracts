@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Sunnyface\Contracts\Data\Llm;
 
 use Spatie\LaravelData\Data;
+use Sunnyface\AiContracts\Support\DeepCloneable;
 use Sunnyface\Contracts\Enums\PipeName;
 
 /**
@@ -13,14 +14,16 @@ use Sunnyface\Contracts\Enums\PipeName;
  * Es el objeto ligero que cada Pipe devuelve antes de que el pipeline principal
  * lo fusione en el CognitiveContextDTO maestro via recordTelemetry().
  *
- * Totalmente readonly: una vez creado por el Pipe, no muta.
+ * Inmutabilidad asimétrica (PHP 8.4): public private(set).
  * El TelemetryPipeMiddleware lo completa con duration_ms antes de la fusión.
  */
 final class WorkerResultDTO extends Data
 {
+    use DeepCloneable;
+
     public function __construct(
         /** Pipe que generó este resultado. */
-        public readonly PipeName $pipeName,
+        public private(set) PipeName $pipeName,
 
         /** Respuesta cruda del LLM (JSON, texto plano, o null si el Pipe no llama al LLM). */
         public private(set) ?string $rawLlmResponse = null,

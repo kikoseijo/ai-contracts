@@ -12,8 +12,8 @@ use Spatie\LaravelData\Data;
 final class CitationDTO extends Data
 {
     public function __construct(
-        public readonly string $doc_id,
-        public readonly string $title,
-        public readonly ?string $url,
+        public private(set) string $doc_id,
+        public private(set) string $title,
+        public private(set) ?string $url,
     ) {}
 }

@@ -6,6 +6,8 @@ namespace Sunnyface\Contracts\Data\Llm;
 
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Data;
+use Sunnyface\AiContracts\Support\DeepCloneable;
+use Sunnyface\AiContracts\Support\RedisSafeSerialization;
 use Sunnyface\Contracts\Casts\CognitivePayloadCast;
 use Sunnyface\Contracts\Contracts\CognitiveStateContract;
 use Sunnyface\Contracts\Enums\HandlerSlug;
@@ -19,28 +21,30 @@ use Sunnyface\Contracts\Enums\TaskStatus;
  * flush a PostgreSQL al final del Job (Claim Check Pattern).
  *
  * Inmutabilidad asimétrica (PHP 8.4+):
- *   - Los identificadores son readonly: no pueden modificarse tras construcción.
- *   - El estado evolutivo usa public private(set): legible desde fuera,
- *     escribible solo desde los métodos de esta clase (with* / add*).
+ *   - Los identificadores usan public private(set): legibles desde fuera,
+ *     escribibles solo desde esta clase (constructor / born / mutadores).
+ *   - El estado evolutivo igual: with* / add* sobre clones.
  *
  * Fluent interface: cada método de mutación devuelve un clone con el nuevo valor,
  * preservando la semántica inmutable en los Pipes.
  */
 final class CognitiveContextDTO extends Data
 {
+    use DeepCloneable;
+
     public function __construct(
-        // ── Identificadores (inmutables de nacimiento) ────────────────────────
-        public readonly string $taskId,
-        public readonly string $tenantId,
-        public readonly string $tenantAgentId,
-        public readonly HandlerSlug $handlerSlug,
+        // ── Identificadores ───────────────────────────────────────────────────
+        public private(set) string $taskId,
+        public private(set) string $tenantId,
+        public private(set) string $tenantAgentId,
+        public private(set) HandlerSlug $handlerSlug,
 
         /**
          * Sesión de chat asociada a la Task (ULID). Se serializa en Redis para que
          * {@see CognitiveStateContract::thaw} pueda
          * rehidratar prefetchedChatMessages sin depender solo de PostgreSQL en caliente.
          */
-        public readonly ?string $chatSessionId = null,
+        public private(set) ?string $chatSessionId = null,
 
         // ── Estado evolutivo (mutable solo desde esta clase) ──────────────────
 
@@ -105,23 +109,11 @@ final class CognitiveContextDTO extends Data
         public private(set) array $vaultTransit = [],
     ) {}
 
-    public function __clone()
-    {
-        if (is_object($this->inputPayload)) {
-            $this->inputPayload = clone $this->inputPayload;
-        }
-        if (is_object($this->outputPayload)) {
-            $this->outputPayload = clone $this->outputPayload;
-        }
-    }
-
     // ── Factory de nacimiento ─────────────────────────────────────────────────
 
     /**
      * Crea un DTO recién nacido con la entrada 'Pending' ya sembrada en statusLedger.
      * Usar este método en lugar de new() garantiza que el estado inicial queda trazado.
-     *
-     * @param  array<string, mixed>  $inputPayload
      */
     public static function born(
         string $taskId,
@@ -141,7 +133,7 @@ final class CognitiveContextDTO extends Data
             handlerSlug: $handlerSlug,
             inputPayload: $inputPayload,
             chatSessionId: $chatSessionId,
-            prefetchedChatMessages: $prefetchedChatMessages,
+            prefetchedChatMessages: RedisSafeSerialization::sanitize($prefetchedChatMessages),
             statusLedger: [new LedgerEntryDTO(status: 'Pending', timestamp: $now, duration_ms: 0.0)],
         );
     }
@@ -181,7 +173,7 @@ final class CognitiveContextDTO extends Data
     public function addMessage(array $message): self
     {
         $clone = clone $this;
-        $clone->messagesHistory[] = $message;
+        $clone->messagesHistory[] = RedisSafeSerialization::sanitize($message);
 
         return $clone;
     }
@@ -190,7 +182,7 @@ final class CognitiveContextDTO extends Data
     public function withMessagesHistory(array $messages): self
     {
         $clone = clone $this;
-        $clone->messagesHistory = $messages;
+        $clone->messagesHistory = RedisSafeSerialization::sanitize($messages);
 
         return $clone;
     }
@@ -228,7 +220,7 @@ final class CognitiveContextDTO extends Data
     public function withPrefetchedChatMessages(array $messages): self
     {
         $clone = clone $this;
-        $clone->prefetchedChatMessages = $messages;
+        $clone->prefetchedChatMessages = RedisSafeSerialization::sanitize($messages);
 
         return $clone;
     }
@@ -241,7 +233,7 @@ final class CognitiveContextDTO extends Data
             $clone->statusLedger = $this->appendLedgerEntry(TaskStatus::Failed);
         }
         $clone->status = TaskStatus::Failed;
-        $clone->errorDetails = $details;
+        $clone->errorDetails = RedisSafeSerialization::sanitize($details);
 
         return $clone;
     }
@@ -268,7 +260,8 @@ final class CognitiveContextDTO extends Data
     public function withVaultTransitPatch(array $patch): self
     {
         $clone = clone $this;
-        $clone->vaultTransit = array_replace($this->vaultTransit, $patch);
+        $sanitizedPatch = RedisSafeSerialization::sanitize($patch);
+        $clone->vaultTransit = array_replace($this->vaultTransit, is_array($sanitizedPatch) ? $sanitizedPatch : []);
 
         return $clone;
     }

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Network;
 
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\DataCollection;
 use Sunnyface\Contracts\Enums\VaultType;
 
 /**
@@ -22,8 +24,8 @@ final class VaultSummaryDTO extends Data
         public readonly string $updated_at,
         public readonly int $documents_count,
         public readonly int $processed_count,
-        /** @var array<int, VaultAgentDTO>|null */
-        public readonly ?array $tenant_agents = null,
+        #[DataCollectionOf(VaultAgentDTO::class)]
+        public readonly ?DataCollection $tenant_agents = null,
         public readonly bool $is_system = false,
     ) {}
 }

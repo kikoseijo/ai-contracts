@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Network;
 
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\DataCollection;
 use Sunnyface\Contracts\Data\Spoke\Responses\ChatMessageDTO;
 use Sunnyface\Contracts\Enums\TaskStatus;
 use Sunnyface\Contracts\Enums\WebhookEvent;
@@ -24,7 +26,7 @@ final class TaskStatusWebhookDTO extends Data
     /**
      * @param  array<string, mixed>|null  $output_payload
      * @param  array<string, mixed>  $metadata
-     * @param  array<int, \Sunnyface\Contracts\Data\Spoke\Responses\ChatMessageDTO>|null  $messages_history
+     * @param  DataCollection<int, ChatMessageDTO>|null  $messages_history
      * @param  array<string, mixed>|null  $telemetry_snapshot
      */
     public function __construct(
@@ -35,8 +37,8 @@ final class TaskStatusWebhookDTO extends Data
         public readonly TaskStatus $status,
         public readonly ?array $output_payload = null,
         public readonly array $metadata = [],
-        /** @var array<int, ChatMessageDTO>|null */
-        public readonly ?array $messages_history = null,
+        #[DataCollectionOf(ChatMessageDTO::class)]
+        public readonly ?DataCollection $messages_history = null,
         public readonly ?array $telemetry_snapshot = null,
     ) {}
 }

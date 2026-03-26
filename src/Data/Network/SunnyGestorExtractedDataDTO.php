@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Sunnyface\Contracts\Data\Network;
 
 use Carbon\CarbonImmutable;
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\DataCollection;
 
 final class SunnyGestorExtractedDataDTO extends Data
 {
     /**
-     * @param SunnyGestorItemDTO[] $items
+     * @param  DataCollection<int, SunnyGestorItemDTO>|null  $items
      */
     public function __construct(
         public readonly ?string $client_tax_id,
@@ -18,7 +20,7 @@ final class SunnyGestorExtractedDataDTO extends Data
         public readonly ?CarbonImmutable $issue_date,
         public readonly float $total_amount,
         public readonly float $tax_amount,
-        /** @var array<int, SunnyGestorItemDTO>|null */
-        public readonly ?array $items = null,
+        #[DataCollectionOf(SunnyGestorItemDTO::class)]
+        public readonly ?DataCollection $items = null,
     ) {}
 }

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Sunnyface\Contracts\Data\Network;
 
+use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\DataCollection;
 use Sunnyface\Contracts\Enums\DocumentStatus;
 use Sunnyface\Contracts\Enums\VaultDocumentType;
 
@@ -26,7 +28,7 @@ final class VaultDocumentItemDTO extends Data
         public readonly string $updated_at,
         public readonly int $file_size_bytes,
         public readonly ?int $page_count,
-        /** @var array<int, VaultDocumentExtractionDTO>|null */
-        public readonly ?array $extractions = null,
+        #[DataCollectionOf(VaultDocumentExtractionDTO::class)]
+        public readonly ?DataCollection $extractions = null,
     ) {}
 }
