@@ -6,7 +6,8 @@ Todos los cambios notables de este paquete se documentan en este archivo.
 
 ## 2026-03-27
 
-- **feat:** add Extraction DTOs (Invoice, Receipt, Payslip) with StructuredExtractionResponseDTO and FinancialExtractionPolymorphicCast (`9a5ac9e`)
+- **refactor:** replace magic strings with ExtractionSchema, DocumentType enums and add ExtractionLineItemDTO for typed line_items (`6a3e977`)
+- **feat:** add Extraction DTOs (Invoice, Receipt, Payslip) with StructuredExtractionResponseDTO and FinancialExtractionPolymorphicCast (`63bd231`)
 - **fix:** revert swarm provisioning DTO to single default_agent_id — decouple Hub from Spoke swarm logic (`acd8a41`)
 - **feat:** introduce task_type routing in ExecuteAgentTaskRequest and swarm provisioning in ProvisionTenantResponseDTO (`5bdddbe`)
 

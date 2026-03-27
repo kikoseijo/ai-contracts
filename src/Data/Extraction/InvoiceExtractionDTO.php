@@ -6,6 +6,7 @@ namespace Sunnyface\Contracts\Data\Extraction;
 
 use Spatie\LaravelData\Attributes\Validation\Required;
 use Spatie\LaravelData\Data;
+use Sunnyface\Contracts\Enums\DocumentType;
 
 /**
  * Extracción genérica: facturas, presupuestos, proformas, albaranes.
@@ -14,7 +15,7 @@ final class InvoiceExtractionDTO extends Data
 {
     public function __construct(
         #[Required]
-        public readonly string $document_type, // 'invoice', 'quote', 'proforma', 'delivery_note'
+        public readonly DocumentType $document_type,
 
         #[Required]
         public readonly float $total_amount,
@@ -28,7 +29,7 @@ final class InvoiceExtractionDTO extends Data
         public readonly ?string $issue_date = null,
         public readonly ?string $reference_number = null,
 
-        /** @var array<int, mixed>|null */
+        /** @var array<int, ExtractionLineItemDTO>|null */
         public readonly ?array $line_items = null,
     ) {}
 }

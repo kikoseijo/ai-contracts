@@ -4,6 +4,8 @@ use Sunnyface\Contracts\Data\Extraction\InvoiceExtractionDTO;
 use Sunnyface\Contracts\Data\Extraction\PayslipExtractionDTO;
 use Sunnyface\Contracts\Data\Extraction\ReceiptExtractionDTO;
 use Sunnyface\Contracts\Data\Extraction\StructuredExtractionResponseDTO;
+use Sunnyface\Contracts\Enums\DocumentType;
+use Sunnyface\Contracts\Enums\ExtractionSchema;
 
 it('casts extracted_data to InvoiceExtractionDTO when detected_schema is invoice', function () {
     $dto = StructuredExtractionResponseDTO::from([
@@ -19,7 +21,9 @@ it('casts extracted_data to InvoiceExtractionDTO when detected_schema is invoice
         ],
     ]);
 
-    expect($dto->extracted_data)->toBeInstanceOf(InvoiceExtractionDTO::class)
+    expect($dto->detected_schema)->toBe(ExtractionSchema::Invoice)
+        ->and($dto->extracted_data)->toBeInstanceOf(InvoiceExtractionDTO::class)
+        ->and($dto->extracted_data->document_type)->toBe(DocumentType::Invoice)
         ->and($dto->extracted_data->total_amount)->toBe(1210.00)
         ->and($dto->extracted_data->issuer_name)->toBe('Acme Corp');
 });
@@ -35,7 +39,8 @@ it('casts extracted_data to ReceiptExtractionDTO when detected_schema is receipt
         ],
     ]);
 
-    expect($dto->extracted_data)->toBeInstanceOf(ReceiptExtractionDTO::class)
+    expect($dto->detected_schema)->toBe(ExtractionSchema::Receipt)
+        ->and($dto->extracted_data)->toBeInstanceOf(ReceiptExtractionDTO::class)
         ->and($dto->extracted_data->vendor_name)->toBe('Café Central');
 });
 
@@ -52,7 +57,8 @@ it('casts extracted_data to PayslipExtractionDTO when detected_schema is payslip
         ],
     ]);
 
-    expect($dto->extracted_data)->toBeInstanceOf(PayslipExtractionDTO::class)
+    expect($dto->detected_schema)->toBe(ExtractionSchema::Payslip)
+        ->and($dto->extracted_data)->toBeInstanceOf(PayslipExtractionDTO::class)
         ->and($dto->extracted_data->gross_salary)->toBe(2800.00)
         ->and($dto->extracted_data->company_name)->toBe('Sunnyface SL');
 });
@@ -63,4 +69,4 @@ it('throws on unknown detected_schema', function () {
         'detected_schema' => 'alien_document',
         'extracted_data' => ['foo' => 'bar'],
     ]);
-})->throws(\InvalidArgumentException::class, 'Unknown extraction schema: alien_document');
+})->throws(\Spatie\LaravelData\Exceptions\CannotCastEnum::class);

@@ -10,6 +10,7 @@ use Spatie\LaravelData\Support\DataProperty;
 use Sunnyface\Contracts\Data\Extraction\InvoiceExtractionDTO;
 use Sunnyface\Contracts\Data\Extraction\PayslipExtractionDTO;
 use Sunnyface\Contracts\Data\Extraction\ReceiptExtractionDTO;
+use Sunnyface\Contracts\Enums\ExtractionSchema;
 
 class FinancialExtractionPolymorphicCast implements Cast
 {
@@ -20,6 +21,10 @@ class FinancialExtractionPolymorphicCast implements Cast
         }
 
         $schema = $properties['detected_schema'] ?? null;
+
+        if ($schema instanceof ExtractionSchema) {
+            $schema = $schema->value;
+        }
 
         return match ($schema) {
             'invoice', 'quote', 'proforma', 'delivery_note' => InvoiceExtractionDTO::from($value),
