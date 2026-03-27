@@ -91,6 +91,21 @@ final class GoldenReferenceDTO extends Data
 
 ```
 
+### 6. Registro de Cambios (CHANGES.md)
+
+Cada vez que se realice un cambio en el paquete (nuevo DTO, refactor, fix, feat, docs, etc.), **DEBES** añadir una entrada en `CHANGES.md` bajo la fecha actual con el formato:
+
+```
+- **tipo:** descripción breve del cambio (`hash`)
+```
+
+- Los tipos válidos son: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`.
+- Si no existe sección para la fecha actual, créala debajo de `## [Unreleased]`.
+- Ordena las entradas de más reciente a más antigua dentro de cada fecha.
+- El hash del commit se añade tras hacer commit; mientras tanto, usa `(pending)`.
+
+----------
+
 ## REGLAS DE ORO
 
 - PROHIBIDO SALIR DE LA CARPETA DEL PROYECTO SIN AUTORIZACION EXPLICITA.
