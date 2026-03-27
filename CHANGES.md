@@ -6,7 +6,8 @@ Todos los cambios notables de este paquete se documentan en este archivo.
 
 ## 2026-03-27
 
-- **feat:** introduce task_type routing in ExecuteAgentTaskRequest and swarm provisioning in ProvisionTenantResponseDTO (`4d94337`)
+- **fix:** revert swarm provisioning DTO to single default_agent_id — decouple Hub from Spoke swarm logic (`e2cc9f0`)
+- **feat:** introduce task_type routing in ExecuteAgentTaskRequest and swarm provisioning in ProvisionTenantResponseDTO (`5bdddbe`)
 
 - **feat:** add WebhookEvent to multiple webhook DTOs and implement PayloadPolymorphicCast for dynamic payload handling (`edccebe`)
 - **feat:** add LeadCaptured event to WebhookEvent enum (`1fe9438`)

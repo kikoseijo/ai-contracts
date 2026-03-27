@@ -29,6 +29,7 @@
 | POST | `/agents` | `AgentController@store` | `CreateAgentRequest` | `AgentCreatedResponseDTO` |
 | GET | `/agents/{id}` | `AgentController@show` | `SpokeTenantIdRequest` | `AgentShowResponseDTO` |
 | PUT | `/agents/{id}` | `AgentController@update` | `UpdateAgentRequest` | `AgentUpdatedResponseDTO` |
+| DELETE | `/agents/{id}` | `AgentController@destroy` | `tenant_id` (body/query) | `204 No Content` |
 | PUT | `/agents/{id}/toggle` | `AgentController@toggle` | `ToggleAgentRequest` | `AgentToggledResponseDTO` |
 | PUT | `/agents/{id}/extractor-config` | `AgentController@updateExtractorConfig` | `UpdateExtractorConfigRequest` | `AgentExtractorConfigResponseDTO` |
 | PUT | `/agents/{id}/config` | `AgentController@updateConfig` | `UpdateSpokeAgentConfigRequest` | `AgentConfigUpdatedResponseDTO` |
