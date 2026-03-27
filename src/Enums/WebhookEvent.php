@@ -18,4 +18,6 @@ enum WebhookEvent: string
     case SchemaDiscovered = 'schema.discovered';
     case UsageReported = 'usage.reported';
     case VaultDocumentStatusChanged = 'vault.document.status_changed';
+    case QuotaSync = 'billing.quota_sync';
+    case GovernanceInsightGenerated = 'governance.insight_generated';
 }
