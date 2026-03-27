@@ -19,11 +19,11 @@ enum LogLevel: string
     public function icon(): string
     {
         return match ($this) {
-            self::Info => 'heroicon-o-information-circle',
-            self::Warning => 'heroicon-o-exclamation-triangle',
-            self::Error => 'heroicon-o-x-circle',
-            self::Critical => 'heroicon-o-fire',
-            default => 'heroicon-o-chat-bubble-bottom-center-text',
+            self::Info => 'lucide-info',
+            self::Warning => 'lucide-triangle-alert',
+            self::Error => 'lucide-circle-x',
+            self::Critical => 'lucide-flame',
+            default => 'lucide-message-square-text',
         };
     }
 

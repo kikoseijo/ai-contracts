@@ -22,11 +22,11 @@ enum VaultDocumentType: string
     public function icon(): string
     {
         return match ($this) {
-            self::Document => 'heroicon-o-document-text',
-            self::Audio => 'heroicon-o-musical-note',
-            self::Image => 'heroicon-o-photo',
-            self::Text => 'heroicon-o-bars-3-bottom-left',
-            default => 'heroicon-o-document',
+            self::Document => 'lucide-file-text',
+            self::Audio => 'lucide-music',
+            self::Image => 'lucide-image',
+            self::Text => 'lucide-list',
+            default => 'lucide-file',
         };
     }
 

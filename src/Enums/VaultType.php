@@ -26,11 +26,11 @@ enum VaultType: string
     public function icon(): string
     {
         return match ($this) {
-            self::Raw => 'heroicon-o-document-text',
-            self::Rag => 'heroicon-o-magnifying-glass-circle',
-            self::Extraction => 'heroicon-o-table-cells',
-            self::Classification => 'heroicon-o-tag',
-            default => 'heroicon-o-cube',
+            self::Raw => 'lucide-file-text',
+            self::Rag => 'lucide-scan-search',
+            self::Extraction => 'lucide-table',
+            self::Classification => 'lucide-tag',
+            default => 'lucide-box',
         };
     }
 

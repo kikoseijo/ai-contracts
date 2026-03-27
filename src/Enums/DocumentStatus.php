@@ -24,7 +24,9 @@ enum DocumentStatus: string
     {
         return match ($this) {
             self::Pending => 'Pendiente',
+            self::Queued => 'En cola',
             self::Processing => 'Procesando',
+            self::Reindexing => 'Reindexando',
             self::Extracted => 'Extraído',
             self::Transcribed => 'Transcrito',
             self::Chunked => 'Fragmentado',
@@ -40,8 +42,8 @@ enum DocumentStatus: string
     public function color(): string
     {
         return match ($this) {
-            self::Pending => 'zinc',
-            self::Processing, self::Extracted, self::Transcribed, self::Chunked => 'amber',
+            self::Pending, self::Queued => 'zinc',
+            self::Processing, self::Reindexing, self::Extracted, self::Transcribed, self::Chunked => 'amber',
             self::Processed, self::Classified, self::Completed, self::Success => 'green',
             self::Failed, self::FailedSecurity => 'red',
         };
@@ -50,10 +52,10 @@ enum DocumentStatus: string
     public function icon(): string
     {
         return match ($this) {
-            self::Pending => 'clock',
-            self::Processing, self::Extracted, self::Transcribed, self::Chunked => 'arrow-path',
-            self::Processed, self::Classified, self::Completed, self::Success => 'check-circle',
-            self::Failed, self::FailedSecurity => 'exclamation-triangle',
+            self::Pending, self::Queued => 'lucide-clock',
+            self::Processing, self::Reindexing, self::Extracted, self::Transcribed, self::Chunked => 'lucide-refresh-cw',
+            self::Processed, self::Classified, self::Completed, self::Success => 'lucide-circle-check',
+            self::Failed, self::FailedSecurity => 'lucide-triangle-alert',
         };
     }
 
