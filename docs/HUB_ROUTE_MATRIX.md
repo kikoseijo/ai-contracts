@@ -86,31 +86,33 @@
 
 ---
 
-## Webhooks salientes Hub → Spoke (no son rutas)
+## Webhooks salientes Hub → Spoke (Endpoint Genérico)
 
-| DTO | Uso |
-|-----|-----|
-| `HubWebhookDTO` | Tareas (`TaskStatus`, `WebhookEvent`) |
-| `ExtractionHubWebhookDTO` | Extracción (`DocumentStatus`) |
-| `TaskStatusWebhookDTO` | Notificación de estado de tarea (`processing`, `completed`, `failed`) |
-| `SunnyGestorWebhookDTO` | Payload específico de SunnyGestor (contiene `SunnyGestorItemDTO[]`) |
-| `QuotaUpdatedWebhookDTO` | Notificación de cambio de cuota del tenant |
-| `SchemaDiscoveredWebhookDTO` | Notificación de nuevo esquema descubierto por inspector |
-| `VaultDocumentIndexedWebhookDTO` | Confirmación de documento indexado en bóveda |
-| `VaultDocumentWebhookDTO` | Eventos genéricos de documento de bóveda |
-| `AiUsageSpokeWebhookDTO` | Telemetría de consumo de IA por tenant |
-| `TenantTaskCompletedWebhookDTO` | Tarea completada con payload final (`TenantTaskCompletedPayloadWebhookDTO`) |
+Todos los webhooks asíncronos se envían a **`POST {spoke_url}/api/webhooks/hub`**. El Spoke enruta internamente por la cabecera `X-Sunnyface-Event`.
+
+| `X-Sunnyface-Event` | DTO (`Sunnyface\Contracts\Data\Network\`) | Descripción |
+|----------------------|-------------------------------------------|-------------|
+| `task.status_changed` | `TaskStatusWebhookDTO` | Cambio de estado de tarea (`processing`, `completed`, `failed`) |
+| `extraction.completed` | `ExtractionHubWebhookDTO` | Extracción exitosa con datos estructurados |
+| `extraction.failed` | `ExtractionHubWebhookDTO` | Extracción fallida con mensaje de error |
+| `vault.document.status_changed` | `VaultDocumentWebhookDTO` | Cambio de estado de documento en bóveda |
+| `vault.document.status_changed` | `VaultDocumentIndexedWebhookDTO` | Confirmación de documento indexado |
+| `schema.discovered` | `SchemaDiscoveredWebhookDTO` | Nuevo esquema descubierto por inspector |
+| `usage.reported` | `AiUsageSpokeWebhookDTO` | Telemetría de consumo de IA por tenant |
+| `quota.updated` | `QuotaUpdatedWebhookDTO` | Cambio de cuota tras consumo |
+| `billing.quota_sync` | `QuotaUpdatedWebhookDTO` | Reconciliación periódica de saldo |
+| `governance.insight_generated` | `GovernanceInsightWebhookDTO` | Insight de auditoría AIOps |
+
+**Nota:** `HubWebhookDTO`, `SunnyGestorWebhookDTO` y `TenantTaskCompletedWebhookDTO` siguen disponibles como DTOs internos para casos específicos de integración.
 
 ---
 
-## Webhooks entrantes Spoke → Hub (Tools Dinámicas)
+## Tools Dinámicas (Síncrono) — Excepción al Endpoint Genérico
 
-Cuando un agente conversacional necesita datos en tiempo real del Satélite, el Hub envía una petición síncrona al endpoint de tools del Spoke.
+Las tools dinámicas son la **única excepción** al endpoint genérico: se envían a `POST {spoke_url}/api/webhooks/hub/tools` de forma **síncrona** (el Hub espera respuesta).
 
 | Método | Ruta (en el Spoke) | Entrada | Respuesta |
 |--------|---------------------|---------|-----------|
 | POST | `/api/webhooks/hub/tools` | `SpokeToolExecutionRequestDTO` | `SpokeToolExecutionResponseDTO` |
 
-El Spoke debe exponer este endpoint protegido por verificación de firma HMAC (`X-Sunnyface-Signature`). La Action receptora enruta al tool handler correspondiente según `tool_name` y devuelve el resultado serializado en el DTO de respuesta.
-
-Ver `docs/HUB_SPOKE_HTTP_CONTRACT.md` y PHPDoc en cada DTO.
+Ambos endpoints (`/api/webhooks/hub` y `/api/webhooks/hub/tools`) deben estar protegidos por verificación de firma HMAC (`X-Sunnyface-Signature`).

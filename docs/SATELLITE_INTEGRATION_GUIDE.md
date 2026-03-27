@@ -127,9 +127,50 @@ Para facilitar la automatización, SunnyMatrix ofrece interfaces de entrada y sa
 
 ### Outbound (Salida hacia el Satélite)
 
-- **Webhooks de Estado:** El Hub os notificará en tiempo real (a vuestro endpoint `/api/webhooks/hub`) cada vez que una tarea cambie de estado (`processing`, `completed`, `failed`). El DTO recibido será `TaskStatusWebhookDTO`.
-- **Webhooks de Extracción:** Cuando un `vision-extractor` termina, recibiréis el JSON estructurado directamente en vuestro webhook para que lo guardéis en vuestra base de datos (`ExtractionHubWebhookDTO`).
-- **Webhooks de Tools Dinámicas:** Cuando un agente conversacional necesita datos en tiempo real de vuestro sistema, el Hub envía una petición **síncrona** a vuestro endpoint `/api/webhooks/hub/tools`. Debéis exponer esta ruta protegida con verificación HMAC (`X-Sunnyface-Signature`).
+El Spoke debe exponer **solo dos endpoints** para recibir comunicaciones del Hub:
+
+| Endpoint | Tipo | Propósito |
+|----------|------|-----------|
+| `POST /api/webhooks/hub` | Asíncrono | Todos los eventos de negocio (tareas, extracciones, cuota, governance, etc.) |
+| `POST /api/webhooks/hub/tools` | Síncrono | Ejecución de tools dinámicas durante conversación |
+
+Ambos endpoints deben verificar la firma HMAC con la cabecera `X-Sunnyface-Signature`.
+
+El Hub identifica cada evento con la cabecera `X-Sunnyface-Event`. El Spoke debe leer este valor para enrutar internamente al handler correspondiente e hidratar el DTO adecuado.
+
+#### Mapa de Eventos (`X-Sunnyface-Event`)
+
+| Evento | DTO esperado (`Sunnyface\Contracts\Data\Network\`) | Descripción |
+|--------|-----------------------------------------------------|-------------|
+| `task.status_changed` | `TaskStatusWebhookDTO` | Cambio de estado de tarea (`processing`, `completed`, `failed`) |
+| `extraction.completed` | `ExtractionHubWebhookDTO` | Extracción exitosa con datos estructurados |
+| `extraction.failed` | `ExtractionHubWebhookDTO` | Extracción fallida con mensaje de error |
+| `vault.document.status_changed` | `VaultDocumentWebhookDTO` | Cambio de estado de documento en bóveda |
+| `vault.document.status_changed` | `VaultDocumentIndexedWebhookDTO` | Confirmación de documento indexado |
+| `schema.discovered` | `SchemaDiscoveredWebhookDTO` | Nuevo esquema descubierto por inspector |
+| `usage.reported` | `AiUsageSpokeWebhookDTO` | Telemetría de consumo de IA por tenant |
+| `quota.updated` | `QuotaUpdatedWebhookDTO` | Cambio de cuota tras consumo de tarea |
+| `billing.quota_sync` | `QuotaUpdatedWebhookDTO` | Reconciliación periódica de saldo de tokens |
+| `governance.insight_generated` | `GovernanceInsightWebhookDTO` | Insight de auditoría AIOps (anomalías, regresiones) |
+
+**Ejemplo de controlador genérico en el Spoke:**
+
+```php
+public function handle(Request $request): JsonResponse
+{
+    $event = $request->header('X-Sunnyface-Event');
+
+    return match ($event) {
+        'task.status_changed'           => $this->handleTaskStatus(TaskStatusWebhookDTO::from($request->all())),
+        'extraction.completed',
+        'extraction.failed'             => $this->handleExtraction(ExtractionHubWebhookDTO::from($request->all())),
+        'quota.updated',
+        'billing.quota_sync'            => $this->handleQuota(QuotaUpdatedWebhookDTO::from($request->all())),
+        // ... resto de eventos
+        default                         => response()->json(['ack' => true]),
+    };
+}
+```
 
 ---
 
