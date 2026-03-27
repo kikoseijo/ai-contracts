@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Sunnyface\Contracts\Data\Network;
 
 use Spatie\LaravelData\Data;
+use Sunnyface\Contracts\Enums\WebhookEvent;
 
 /**
  * Consumo de IA notificado al Spoke para descuento de cartera (billing).
@@ -12,6 +13,7 @@ use Spatie\LaravelData\Data;
 final class AiUsageSpokeWebhookDTO extends Data
 {
     public function __construct(
+        public readonly WebhookEvent $event,
         public readonly string $tenant_id,
         public readonly int $usage_log_id,
         public readonly int $prompt_tokens,

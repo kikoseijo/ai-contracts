@@ -6,6 +6,7 @@ namespace Sunnyface\Contracts\Data\Network;
 
 use Spatie\LaravelData\Data;
 use Sunnyface\Contracts\Enums\DocumentStatus;
+use Sunnyface\Contracts\Enums\WebhookEvent;
 
 /**
  * Payload HMAC-firmado hacia el Spoke cuando un documento de bóveda queda indexado.
@@ -13,6 +14,7 @@ use Sunnyface\Contracts\Enums\DocumentStatus;
 final class VaultDocumentIndexedWebhookDTO extends Data
 {
     public function __construct(
+        public readonly WebhookEvent $event,
         public readonly string $document_id,
         public readonly DocumentStatus $status,
     ) {}
