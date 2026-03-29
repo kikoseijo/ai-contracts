@@ -32,7 +32,7 @@
 | DELETE | `/agents/{id}` | `AgentController@destroy` | `tenant_id` (body/query) | `204 No Content` |
 | PUT | `/agents/{id}/toggle` | `AgentController@toggle` | `ToggleAgentRequest` | `AgentToggledResponseDTO` |
 | PUT | `/agents/{id}/extractor-config` | `AgentController@updateExtractorConfig` | `UpdateExtractorConfigRequest` | `AgentExtractorConfigResponseDTO` |
-| PUT | `/agents/{id}/config` | `AgentController@updateConfig` | `UpdateSpokeAgentConfigRequest` | `AgentConfigUpdatedResponseDTO` |
+| PUT | `/agents/{id}/config` | `AgentController@updateConfig` | `UpdateAgentConfigRequestDTO` (`Network\`) | `AgentConfigUpdatedResponseDTO` |
 | PUT | `/agents/{id}/vaults/sync` | `AgentController@syncVaults` | `SyncAgentVaultsRequest` | `AgentUpdatedResponseDTO` |
 | POST | `/agents/{id}/approve-inspector-schema` | `AgentController@approveInspectorSchema` | `ApproveInspectorSchemaRequest` | `AgentExtractorConfigResponseDTO` |
 | POST | `/agents/{id}/execute` | `ExecuteAgentTaskController@store` | `ExecuteAgentTaskRequest` | `TaskCreatedResponseDTO` (`Network\`, tarea worker) |
@@ -99,7 +99,7 @@ Todos los webhooks asíncronos se envían a **`POST {spoke_url}/api/webhooks/hub
 | `vault.document.status_changed` | `VaultDocumentWebhookDTO` | Cambio de estado de documento en bóveda |
 | `vault.document.status_changed` | `VaultDocumentIndexedWebhookDTO` | Confirmación de documento indexado |
 | `schema.discovered` | `SchemaDiscoveredWebhookDTO` | Nuevo esquema descubierto por inspector |
-| `usage.reported` | `AiUsageSpokeWebhookDTO` | Telemetría de consumo de IA por tenant |
+| `usage.reported` | `UsageWebhookDTO` | Telemetría de consumo de IA por tenant |
 | `quota.updated` | `QuotaUpdatedWebhookDTO` | Cambio de cuota tras consumo |
 | `billing.quota_sync` | `QuotaUpdatedWebhookDTO` | Reconciliación periódica de saldo |
 | `governance.insight_generated` | `GovernanceInsightWebhookDTO` | Insight de auditoría AIOps |
