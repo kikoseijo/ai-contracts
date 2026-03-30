@@ -8,7 +8,6 @@ use Spatie\LaravelData\Casts\Cast;
 use Spatie\LaravelData\Support\Creation\CreationContext;
 use Spatie\LaravelData\Support\DataProperty;
 use Sunnyface\Contracts\Data\Classifier\ClassifierOutputDTO;
-use Sunnyface\Contracts\Data\Extractor\InvoiceOutputDTO;
 use Sunnyface\Contracts\Data\Network\TaskOutputPayloadDTO;
 use Sunnyface\Contracts\Data\Translator\TranslatorOutputDTO;
 use Sunnyface\Contracts\Enums\HandlerSlug;
@@ -30,9 +29,13 @@ class CognitiveOutputPayloadCast implements Cast
         }
 
         return match ($slug) {
-            HandlerSlug::Talker, HandlerSlug::FinancialAdvisor, HandlerSlug::CustomsAdvisor, HandlerSlug::MetaAgent => TaskOutputPayloadDTO::from($value),
+            HandlerSlug::Talker,
+            HandlerSlug::FinancialAdvisor,
+            HandlerSlug::CustomsAdvisor,
+            HandlerSlug::MetaAgent,
+            HandlerSlug::VisionExtractor,
+            HandlerSlug::FinancialExtractor => TaskOutputPayloadDTO::from($value),
             HandlerSlug::DocumentClassifier => ClassifierOutputDTO::from($value),
-            HandlerSlug::VisionExtractor, HandlerSlug::FinancialExtractor => InvoiceOutputDTO::from($value),
             default => $value,
         };
     }

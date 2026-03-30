@@ -39,6 +39,16 @@ return [
             'description' => 'Proceso de fondo encargado de vectorizar y almacenar documentos en la base de conocimiento.',
         ],
     ],
+    'vision_extractor_schemas' => [
+        'financial-document' => [
+            'label' => 'Factura / Ticket / Presupuesto',
+            'description' => 'Documentos financieros: facturas, tickets de compra, presupuestos y notas de crédito.',
+        ],
+        'payslip' => [
+            'label' => 'Nómina / Jaaropgave',
+            'description' => 'Nóminas de empleados, resúmenes anuales fiscales (jaaropgave) y recibos de salario.',
+        ],
+    ],
     'vault_types' => [
         'raw' => [
             'label' => 'Almacenamiento Directo',

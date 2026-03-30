@@ -10,7 +10,6 @@ use Sunnyface\Contracts\Data\Spoke\Payloads\DocumentClassifierPayloadDTO;
 use Sunnyface\Contracts\Data\Spoke\Payloads\VisionExtractorPayloadDTO;
 use Sunnyface\Contracts\Data\Network\TaskOutputPayloadDTO;
 use Sunnyface\Contracts\Data\Classifier\ClassifierOutputDTO;
-use Sunnyface\Contracts\Data\Extractor\InvoiceOutputDTO;
 use Sunnyface\Contracts\Data\Translator\TranslatorOutputDTO;
 use Sunnyface\Contracts\Enums\HandlerSlug;
 
@@ -29,9 +28,13 @@ final class PayloadHydrator
     public static function hydrateOutput(HandlerSlug $handler, array $payload): object|array
     {
         return match ($handler) {
-            HandlerSlug::Talker, HandlerSlug::FinancialAdvisor, HandlerSlug::CustomsAdvisor, HandlerSlug::MetaAgent => TaskOutputPayloadDTO::from($payload),
+            HandlerSlug::Talker,
+            HandlerSlug::FinancialAdvisor,
+            HandlerSlug::CustomsAdvisor,
+            HandlerSlug::MetaAgent,
+            HandlerSlug::VisionExtractor,
+            HandlerSlug::FinancialExtractor => TaskOutputPayloadDTO::from($payload),
             HandlerSlug::DocumentClassifier => ClassifierOutputDTO::from($payload),
-            HandlerSlug::VisionExtractor, HandlerSlug::FinancialExtractor => InvoiceOutputDTO::from($payload),
             HandlerSlug::TextTranslator => TranslatorOutputDTO::from($payload),
             default => is_array($payload) ? (object) $payload : $payload,
         };

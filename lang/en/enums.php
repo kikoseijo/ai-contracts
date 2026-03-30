@@ -57,6 +57,16 @@ return [
             'description' => 'Automatically classifies documents by type and content using language models.',
         ],
     ],
+    'vision_extractor_schemas' => [
+        'financial-document' => [
+            'label' => 'Invoice / Receipt / Quote',
+            'description' => 'Financial documents: invoices, purchase receipts, quotes, and credit notes.',
+        ],
+        'payslip' => [
+            'label' => 'Payslip / Jaaropgave',
+            'description' => 'Employee payslips, annual tax summaries (jaaropgave), and salary statements.',
+        ],
+    ],
     'vault_document_types' => [
         'document' => 'Document',
         'audio' => 'Audio',

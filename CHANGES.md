@@ -4,6 +4,10 @@ Todos los cambios notables de este paquete se documentan en este archivo.
 
 ## [Unreleased]
 
+- **feat:** `VisionExtractorSchemaSlug` enum (slugs canónicos → clase DTO de salida) y traducciones `vision_extractor_schemas` para etiquetas del Hub; satélites pueden hidratar con `VisionExtractorSchemaSlug::tryFrom($schema_slug)?->outputDtoClass()`.
+- **feat:** `VisionExtractorSchemaSlug::missingMetadataSchemaSlugMessage()` — texto estándar para errores de satélite cuando falta `metadata.schema_slug`.
+- **feat:** `TaskOutputPayloadDTO` incluye `file_type` y `schema_slug` (extracción visión); `PayloadHydrator::hydrateOutput` e hidratación cognitiva usan `TaskOutputPayloadDTO` para salidas de `VisionExtractor` / `FinancialExtractor` (coincide con lo persistido por el Hub).
+
 ## 2026-03-27
 
 - **refactor:** remove redundant Extraction DTOs and enums — FinancialExtractionOutputDTO is the master for invoicing; add PayslipExtractionOutputDTO for payroll domain (`b4f1715`)
