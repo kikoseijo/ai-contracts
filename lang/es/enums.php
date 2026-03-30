@@ -72,6 +72,7 @@ return [
         'audio' => 'Audio',
         'image' => 'Imagen',
         'text' => 'Texto Plano',
+        'video' => 'Vídeo',
     ],
     'log_levels' => [
         'info' => 'Información',

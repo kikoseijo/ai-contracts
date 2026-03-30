@@ -13,6 +13,7 @@ enum VaultDocumentType: string
     case Audio = 'audio';
     case Image = 'image';
     case Text = 'text';
+    case Video = 'video';
 
     public function label(): string
     {
@@ -26,6 +27,7 @@ enum VaultDocumentType: string
             self::Audio => 'lucide-music',
             self::Image => 'lucide-image',
             self::Text => 'lucide-list',
+            self::Video => 'lucide-video',
             default => 'lucide-file',
         };
     }
@@ -37,6 +39,7 @@ enum VaultDocumentType: string
             self::Audio => 'purple',
             self::Image => 'amber',
             self::Text => 'slate',
+            self::Video => 'cyan',
             default => 'gray',
         };
     }
