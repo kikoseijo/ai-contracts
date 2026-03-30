@@ -112,11 +112,11 @@ Todos los webhooks asíncronos se envían a **`POST {spoke_url}/api/webhooks/hub
 
 El Spoke envía callbacks al Hub cuando completa procesamiento local. Cada callback incluye el `trace_id` para correlación.
 
-| Método | Ruta (en el Hub) | Entrada (body JSON) | Respuesta |
-|--------|------------------|---------------------|-----------|
-| POST | `/api/v1/spoke/extraction/callback` | `{ trace_id, tenant_id, document_id, status, extracted_data, validation_errors, audit_risk_note }` | `ExtractionCallbackAckDTO` |
+| Metodo | Ruta (en el Hub) | DTO Entrada (`Network\`) | DTO Respuesta (`Network\`) |
+|--------|------------------|--------------------------|----------------------------|
+| POST | `/api/v1/spoke/extraction/callback` | `SpokeExtractionCallbackDTO` | `ExtractionCallbackAckDTO` |
 
-El Spoke procesa la extracción via `DocumentExtractionPipeline` y el último pipe (`DispatchCallbackToHubPipe`) envía el callback. Si el callback falla, el error se registra en telemetría pero no bloquea el flujo.
+El Spoke construye `SpokeExtractionCallbackDTO` (tipado, del paquete `ai-contracts`) y lo envia via `HubCommunicationService::post($callback, ExtractionCallbackAckDTO::class)`. Cero arrays manuales. Si el callback falla, el error se registra en telemetria pero no bloquea el flujo.
 
 ---
 

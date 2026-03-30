@@ -22,8 +22,8 @@ final class WorkerResultDTO extends Data
     use DeepCloneable;
 
     public function __construct(
-        /** Pipe que generó este resultado. */
-        public private(set) PipeName $pipeName,
+        /** Pipe que generó este resultado. Soporta Enums core o strings de pipes dinámicos del Spoke. */
+        public private(set) PipeName|string $pipeName,
 
         /** Respuesta cruda del LLM (JSON, texto plano, o null si el Pipe no llama al LLM). */
         public private(set) ?string $rawLlmResponse = null,
@@ -67,5 +67,15 @@ final class WorkerResultDTO extends Data
     public function totalTokens(): int
     {
         return $this->tokensIn + $this->tokensOut;
+    }
+
+    /**
+     * Helper para garantizar la serialización segura a DB/Redis.
+     */
+    public function getPipeNameString(): string
+    {
+        return $this->pipeName instanceof PipeName
+            ? $this->pipeName->value
+            : $this->pipeName;
     }
 }

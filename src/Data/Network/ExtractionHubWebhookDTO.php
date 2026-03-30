@@ -25,6 +25,7 @@ final class ExtractionHubWebhookDTO extends Data
         public readonly WebhookEvent $event,
         public readonly string $tenant_id,
         public readonly DocumentStatus $status,
+        public readonly ?string $trace_id = null,
         public readonly ?string $document_id = null,
         public readonly ?array $output = null,
         public readonly ?string $error = null,
