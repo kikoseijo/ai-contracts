@@ -1,120 +1,107 @@
-# Contrato HTTP Hub <-> Spoke
+# Contrato HTTP Hub ↔ Spoke — “Ojos” para el cliente
 
-Este documento es la **fuente de verdad operativa** para quien consume el Hub desde el Spoke (Laravel, Livewire, jobs). Si aqui no esta claro como mapear una respuesta, el Spoke queda **ciego**: arrays sueltos, `null` silenciosos y bugs en produccion.
+Este documento es la **fuente de verdad operativa** para quien consume el Hub desde el Spoke (Laravel, Livewire, jobs). Si aquí no está claro cómo mapear una respuesta, el Spoke queda **ciego**: arrays sueltos, `null` silenciosos y bugs en producción.
 
-## 1. Regla de oro: JSON -> DTO, no -> `$array['clave']`
+## 1. Regla de oro: JSON → DTO, no → `$array['clave']`
 
-Tras cada `Http::` / `HubCommunicationService`:
+Tras cada `Http::` / `HubApiClient`:
 
-1. Mirar **codigo HTTP** y cabeceras si aplica.
+1. Mirar **código HTTP** y cabeceras si aplica.
 2. Decodificar cuerpo a array **solo una vez** en el borde del cliente.
-3. **Inmediatamente** hidratar un DTO del paquete `sunnyface/ai-contracts` con `SomeResponseDTO::from($payload)`.
-4. El resto del codigo del Spoke solo usa **propiedades tipadas** del DTO.
+3. **Inmediatamente** hidratar un DTO del paquete `sunnyface/ai-contracts` con `SomeResponseDTO::from($payload)` (o el constructor si no aplica `from`).
+4. El resto del código del Spoke solo usa **propiedades tipadas** del DTO.
 
 **Prohibido** arrastrar `$response['vaults']`, `$body['task_id']`, etc. por Actions, Livewire o vistas.
 
-## 2. Donde vive cada DTO
+## 2. `_hub_error` (solo Spoke, nunca Hub)
 
-| Area | Namespace | Uso |
-|------|-----------|-----|
-| Respuestas de dominio compartidas (listados, metricas, webhooks) | `Sunnyface\Contracts\Data\Network\` | Cuerpo JSON 2xx con forma estable. Webhooks Hub->Spoke. Callbacks Spoke->Hub. |
-| Respuestas de exito y error especificas | `Sunnyface\Contracts\Data\Spoke\Responses\` | `ApiErrorResponseDTO`, envelopes widget/funnel, listados. |
-| Requests / payloads de entrada | `Sunnyface\Contracts\Data\Spoke\` | Requests y payloads polimorficos en `...\Payloads\`. |
-| Configuracion por tipo de agente | `Sunnyface\Contracts\Data\Agent\` | Configs tipados: `TalkerConfigData`, `ExtractorConfigData`, etc. |
-| Resultados de procesamiento | `Sunnyface\Contracts\Data\Classifier\`, `...\Extractor\`, etc. | DTOs de ejecucion interna y output. |
-| Motor cognitivo (pipeline) | `Sunnyface\Contracts\Data\Llm\` | `CognitiveContextDTO` (maquina de estados), `AiMessageData`, `WorkerResultDTO`. |
-| Gobernanza y metricas | `Sunnyface\Contracts\Data\Governance\`, `...\Metrics\` | `AgentInsightData`, `MonthlyBillingSummaryData`. |
-| Ingesta de documentos (Vault) | `Sunnyface\Contracts\Data\Vault\` | DTOs de entrada para ingestion. |
+- **`_hub_error` no lo envía el Hub.** Es un marcador que puede añadir el **`HubApiClient` (u otro wrapper HTTP del Spoke)** cuando hay timeout, red, 500 sin cuerpo parseable, etc.
+- Si detectas `_hub_error`, **no** intentes `VaultListResponseDTO::from(...)`: no es un contrato del Hub; trátalo como fallo de transporte y muestra telemetría / retry / mensaje genérico.
 
-### DTOs de Callback (Spoke -> Hub)
+## 3. Dónde vive cada DTO
 
-| DTO | Namespace | Proposito |
-|-----|-----------|-----------|
-| `ExtractionCallbackAckDTO` | `Sunnyface\Contracts\Data\Network\` | ACK del Hub al callback de extraccion del Spoke |
+| Área | Namespace típico | Uso |
+|------|-------------------|-----|
+| Respuestas de dominio compartidas (listados, métricas, webhooks) | `Sunnyface\Contracts\Data\Network\` | Cuerpo JSON 2xx con forma estable (ej. `VaultListResponseDTO`, `TaskCreatedResponseDTO`). Webhooks Hub→Spoke (`HubWebhookDTO`, `TaskStatusWebhookDTO`, etc.). |
+| Respuestas de éxito y error específicas | `Sunnyface\Contracts\Data\Spoke\Responses\` | `ApiErrorResponseDTO`, envelopes widget/funnel, listados (`AgentListResponseDTO`, `VaultListResponseDTO`). |
+| Requests / payloads de entrada | `Sunnyface\Contracts\Data\Spoke\` | Requests (`CreateAgentRequest`, `SpokeTenantIdRequest`). Payloads polimórficos en `...\Payloads\` (`ConversationalPayloadDTO`, `VisionExtractorPayloadDTO`, `DocumentClassifierPayloadDTO`). |
+| Configuración por tipo de agente | `Sunnyface\Contracts\Data\Agent\` | Configs tipados: `TalkerConfigData`, `TranslatorConfigData`, `ExtractorConfigData`, `ClassifierConfigData`. |
+| Resultados de procesamiento | `Sunnyface\Contracts\Data\Classifier\`, `...\Extractor\`, `...\Translator\`, `...\FinancialExtraction\` | DTOs de ejecución interna y output: `ClassifierOutputDTO`, `InvoiceOutputDTO`, `TranslatorOutputDTO`, `FinancialExtractionOutputDTO`. |
+| Motor cognitivo (pipeline) | `Sunnyface\Contracts\Data\Llm\` | `CognitiveContextDTO` (máquina de estados), `AiMessageData`, `WorkerResultDTO` (telemetría), `ToolExecutionDTO`. |
+| Gobernanza y métricas | `Sunnyface\Contracts\Data\Governance\`, `...\Metrics\` | `AgentInsightData`, `MonthlyBillingSummaryData`, `DailyUsageSummaryData`. |
+| Ingesta de documentos (Vault) | `Sunnyface\Contracts\Data\Vault\` | DTOs de entrada para ingestión: `IngestTextData`, `IngestFileData`. |
 
-## 3. trace_id: El Cable de Trazabilidad
-
-Todo intercambio Hub <-> Spoke debe portar un `trace_id` para correlacion end-to-end.
-
-### Hub -> Spoke (Webhooks)
-
-El Hub puede enviar el trace_id via:
-- Header `X-Trace-Id`
-- Campo `trace_id` en el body JSON
-
-El Spoke (`SatelliteTransit`) los lee en ese orden de prioridad. Si ninguno esta presente, genera `sat-{ULID}`.
-
-### Spoke -> Hub (Callbacks)
-
-El Spoke incluye el `trace_id` en el body del callback:
-```json
-{
-  "trace_id": "ext-01JXYZ...",
-  "tenant_id": "...",
-  "status": "completed|flagged",
-  ...
-}
-```
-
-### Telemetria
-
-Cada transicion (pipe o job) escribe a Redis Streams en la conexion `telemetry`:
-```
-XADD cognitive_trace:{trace_id} * pipe NombreDelPipe elapsed_ms 12.345 status ok
-```
-
-Consultable: `XRANGE cognitive_trace:{trace_id} - +`
+**Importante:** un mismo endpoint puede devolver **200 con un DTO de negocio** o **404/422 con `ApiErrorResponseDTO`**. El Spoke debe ramificar por **status** y por **forma mínima del JSON** antes de hidratar.
 
 ## 4. Errores: `ApiErrorResponseDTO`
 
-El Hub suele responder errores con cuerpo JSON:
+El Hub suele responder errores con cuerpo JSON que incluye al menos:
 
 ```json
 { "error": "Mensaje legible" }
 ```
 
-Al hidratar **desde el Spoke**:
+En PHP, el DTO `ApiErrorResponseDTO` incluye `httpStatus` para `toResponse()` del Hub; en JSON puede ir **oculto** (`#[Hidden]`). Al hidratar **desde el Spoke** usando solo el cuerpo, pasa el status de la respuesta HTTP:
 
 ```php
+$payload = $response->json();
+$status = $response->status();
+
 $error = ApiErrorResponseDTO::from([
     'error' => (string) ($payload['error'] ?? 'Unknown error'),
+    'httpStatus' => $status,
+]);
+```
+
+Ajusta si tu cliente ya normaliza otro formato; la regla es: **tipar el error igual que el éxito**.
+
+## 5. Éxito: ejemplo bóvedas (`GET` listado)
+
+El Hub devuelve un JSON compatible con `VaultListResponseDTO` (propiedad `vaults`, elementos `VaultSummaryDTO`, enums como `VaultType`, etc.).
+
+En el Spoke:
+
+```php
+if ($response->successful()) {
+    return VaultListResponseDTO::from($response->json());
+}
+
+// 4xx/5xx con forma de error
+return ApiErrorResponseDTO::from([
+    'error' => (string) ($response->json('error') ?? 'Request failed'),
     'httpStatus' => $response->status(),
 ]);
 ```
 
-La regla: **tipar el error igual que el exito**.
+O devuelve un union/`Result` interno; lo crítico es **no** mezclar arrays crudos después de este punto.
 
-## 5. `_hub_error` (solo Spoke, nunca Hub)
+## 6. Cómo responde el Hub (referencia)
 
-- **`_hub_error` no lo envia el Hub.** Es un marcador que puede añadir el `HubCommunicationService` del Spoke cuando hay timeout, red, 500 sin cuerpo parseable, etc.
-- Si detectas `_hub_error`, **no** intentes hidratar un DTO de negocio.
-
-## 6. Como responde el Hub (referencia)
-
-Los DTOs extienden `Spatie\LaravelData\Data` e implementan `Responsable`. Los controladores retornan el DTO directamente y Laravel invoca `toResponse()`:
+Los DTOs extienden `Spatie\LaravelData\Data` e implementan la interfaz `Responsable` de Laravel. Los controladores **nunca** llaman a `response()->json()` manualmente; retornan el DTO directamente y Laravel invoca `toResponse()` del propio DTO:
 
 ```php
-// Controlador del Hub
+// Controlador del Hub — patrón correcto
 public function index(SpokeTenantIdRequest $request): VaultListResponseDTO|ApiErrorResponseDTO
 {
     return $this->listVaultsAction->execute($request->tenant());
 }
 ```
 
-## 7. Enums y fechas
+El DTO gestiona su propio código HTTP y serialización JSON a través de `toResponse()`. Eso define la forma del JSON que el Spoke debe reversar con `::from()`.
+
+## 7. PHP en el Hub: union de tipos en controladores
+
+En el Hub es correcto tipar el retorno como:
+
+`VaultListResponseDTO|ApiErrorResponseDTO`
+
+Eso **no cambia el JSON**; solo ayuda al IDE. En el Spoke no verás la unión en runtime: debes **elegir el DTO** según HTTP + payload.
+
+## 8. Enums y fechas
 
 - Los **enums** se serializan como su `value` (string); `::from()` los reconstruye.
-- Fechas en DTOs de red van como **string** para estabilidad entre procesos.
+- Fechas en DTOs de red suelen ir como **string** (`created_at`, etc.) para estabilidad entre procesos; no asumas `Carbon` en el contrato compartido salvo que el DTO lo exponga explícitamente.
 
-## 8. Procesamiento en el Spoke: Pipeline, no Servicio
+---
 
-El Spoke ya no usa servicios monoliticos para procesamiento. Todo pasa por pipelines deterministicos con telemetria:
-
-| Flujo | Pipeline | Pipes |
-|-------|----------|-------|
-| Webhook inbound | `InboundPayloadPipeline` | InitializeTelemetry -> HydrateEnvelope -> SanitizePii -> DetermineIntent |
-| Extraccion documento | `DocumentExtractionPipeline` | VerifyQuota -> ExecuteVision -> Normalize -> KOR -> BTW -> Shadow -> Persist -> Callback |
-| Intent texto (chat) | `RouteTextIntentPipeline` | SanitizePrompt -> AssembleTriage -> ExecuteLLM -> HydrateIntent -> ResolveLocally |
-| Calculo fiscal NL | `CalculateNlProvisionPipeline` | ExtractProfile -> Box1 -> Rates -> Box3 -> Credits -> ZVW -> Aggregate |
-
-Los jobs legacy (`ProcessInboundPayload`, `ExtractDataWithAI`, `RunAntivirusAudit`) usan `CognitiveTraceJobMiddleware` para escribir a la misma traza Redis.
+**Resumen para “Claudia” en el Spoke:** una respuesta HTTP = una decisión = un DTO. Sin ese paso, el Spoke trabaja a ciegas.
