@@ -20,6 +20,7 @@ enum PipeName: string
     case CleanupVaultFile = 'CleanupVaultFilePipe';
     case CognitiveFire = 'CognitiveFirewallPipe';
     case ConvertFileToBase64 = 'ConvertFileToBase64Pipe';
+    case Dynamic = 'DynamicPipe';
     case DownloadVaultFile = 'DownloadVaultFilePipe';
     case EmbedChunks = 'EmbedChunksPipe';
     case ExecuteChatLlm = 'ExecuteChatLlmPipe';
