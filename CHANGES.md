@@ -4,13 +4,30 @@ Todos los cambios notables de este paquete se documentan en este archivo.
 
 ## [Unreleased]
 
-- **feat:** `VisionExtractorSchemaSlug` enum (slugs canónicos → clase DTO de salida) y traducciones `vision_extractor_schemas` para etiquetas del Hub; satélites pueden hidratar con `VisionExtractorSchemaSlug::tryFrom($schema_slug)?->outputDtoClass()`.
-- **feat:** `VisionExtractorSchemaSlug::missingMetadataSchemaSlugMessage()` — texto estándar para errores de satélite cuando falta `metadata.schema_slug`.
-- **feat:** `TaskOutputPayloadDTO` incluye `file_type` y `schema_slug` (extracción visión); `PayloadHydrator::hydrateOutput` e hidratación cognitiva usan `TaskOutputPayloadDTO` para salidas de `VisionExtractor` / `FinancialExtractor` (coincide con lo persistido por el Hub).
+- **feat:** `PendingValidationSource` enum — orígenes de validación pendiente (WhatsApp, Telegram, Zapier, OCR, Hub, etc.) con `label()`, `color()`, `icon()`.
+- **feat:** `PendingValidationStatus` enum — estados del ciclo de validación (Processing → Approved/Rejected/Resolved) con `isTerminal()`, `isActionable()`, `label()`, `color()`, `icon()`.
+- **feat:** `SpokeDocumentStatus` enum — estados de documento en satélite (Draft → Verified → Paid/Cancelled) con `label()`, `color()`, `icon()`.
+
+## 2026-03-30
+
+- **feat:** `VisionExtractorSchemaSlug` enum (slugs canónicos → clase DTO de salida) y traducciones `vision_extractor_schemas` para etiquetas del Hub; satélites pueden hidratar con `VisionExtractorSchemaSlug::tryFrom($schema_slug)?->outputDtoClass()` (`00238c2`)
+- **feat:** `VisionExtractorSchemaSlug::missingMetadataSchemaSlugMessage()` — texto estándar para errores de satélite cuando falta `metadata.schema_slug` (`00238c2`)
+- **feat:** `TaskOutputPayloadDTO` incluye `file_type` y `schema_slug` (extracción visión); `PayloadHydrator::hydrateOutput` e hidratación cognitiva usan `TaskOutputPayloadDTO` para salidas de `VisionExtractor` / `FinancialExtractor` (`00238c2`)
+- **docs:** mejorar HUB_ROUTE_MATRIX y HUB_SPOKE_HTTP_CONTRACT con detalles de callback y procesamiento (`a2728cf`)
+- **docs:** revertir archivos markdown para restaurar acentos y caracteres especiales (`a4f6690`)
+- **docs:** actualizar HUB_ROUTE_MATRIX y añadir `SpokeExtractionCallbackDTO` para manejo de callbacks (`13f6e94`)
+
+## 2026-03-29
+
+- **refactor:** actualizar DTO de configuración de agente y tipos de eventos webhook (`56f8e22`)
 
 ## 2026-03-27
 
+- **feat:** add financial extraction DTOs with polymorphic cast (`63bd231`)
+- **refactor:** replace magic strings with `ExtractionSchema` and `DocumentType` enums (`942f5f3`)
+- **refactor:** consolidate extraction DTOs around `FinancialExtractionOutputDTO` (`c992c52`)
 - **refactor:** remove redundant Extraction DTOs and enums — FinancialExtractionOutputDTO is the master for invoicing; add PayslipExtractionOutputDTO for payroll domain (`b4f1715`)
+- **feat:** update composer dependencies and add new icon mappings for document statuses and log levels (`eda8ef4`)
 - **fix:** revert swarm provisioning DTO to single default_agent_id — decouple Hub from Spoke swarm logic (`acd8a41`)
 - **feat:** introduce task_type routing in ExecuteAgentTaskRequest and swarm provisioning in ProvisionTenantResponseDTO (`5bdddbe`)
 
