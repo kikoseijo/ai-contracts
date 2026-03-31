@@ -50,6 +50,14 @@ class FinancialExtractionOutputDTO extends Data
         #[UI(label: 'Total', component: UiComponent::Number)]
         public readonly float $total,
 
+        #[UI(label: 'Retention Amount', component: UiComponent::Number)]
+        /** Importe retenido (ej. IRPF en España). Si no hay retención, es 0. */
+        public readonly float $retention_amount = 0.0,
+
+        #[UI(label: 'Retention Rate', component: UiComponent::Number)]
+        /** Porcentaje de la retención (ej. 7 o 15). Si no hay, es 0. */
+        public readonly float $retention_rate = 0.0,
+
         #[UI(label: 'Line Items', component: UiComponent::Table)]
         /** @var array<int, DocumentLineData>|null */
         public readonly ?array $line_items = null,
