@@ -26,6 +26,7 @@
 | POST | `/knowledge/ingest` | `KnowledgeController@ingest` | `IngestKnowledgeRequest` | `KnowledgeIngestQueuedResponseDTO` |
 
 > ⚠️ **Flujo correcto para ingesta con `task_id` garantizado (Rag/Classification):**
+>
 > 1. `POST /vaults/{vault_id}/documents` → crea el `VaultDocument`, devuelve `document_id`. El campo `task_id` puede ser `null` para tipos Audio/Video/Extraction.
 > 2. `POST /knowledge/ingest` con `{ vault_document_id }` → encola el procesamiento, devuelve `task_id` **siempre presente** para hacer polling.
 >
@@ -34,11 +35,11 @@
 | GET | `/agents` | `AgentController@index` | `SpokeTenantIdRequest` | `AgentListResponseDTO` |
 | POST | `/agents` | `AgentController@store` | `CreateAgentRequest` | `AgentCreatedResponseDTO` |
 | GET | `/agents/{id}` | `AgentController@show` | `SpokeTenantIdRequest` | `AgentShowResponseDTO` |
-| PUT | `/agents/{id}` | `AgentController@update` | `UpdateAgentRequest` | `AgentUpdatedResponseDTO` |
+| PUT | `/agents/{id}` | `AgentController@update` | `UpdateAgentRequestDTO` | `AgentUpdatedResponseDTO`  |
+| PUT | `/agents/{id}/config` | `AgentController@updateConfig` | `UpdateAgentRequestDTO` (`Network\`) | `AgentConfigUpdatedResponseDTO` (DEPRECATED) |
 | DELETE | `/agents/{id}` | `AgentController@destroy` | `tenant_id` (body/query) | `204 No Content` |
 | PUT | `/agents/{id}/toggle` | `AgentController@toggle` | `ToggleAgentRequest` | `AgentToggledResponseDTO` |
 | PUT | `/agents/{id}/extractor-config` | `AgentController@updateExtractorConfig` | `UpdateExtractorConfigRequest` | `AgentExtractorConfigResponseDTO` |
-| PUT | `/agents/{id}/config` | `AgentController@updateConfig` | `UpdateAgentConfigRequestDTO` (`Network\`) | `AgentConfigUpdatedResponseDTO` |
 | PUT | `/agents/{id}/vaults/sync` | `AgentController@syncVaults` | `SyncAgentVaultsRequest` | `AgentUpdatedResponseDTO` |
 | POST | `/agents/{id}/approve-inspector-schema` | `AgentController@approveInspectorSchema` | `ApproveInspectorSchemaRequest` | `AgentExtractorConfigResponseDTO` |
 | POST | `/agents/{id}/execute` | `ExecuteAgentTaskController@store` | `ExecuteAgentTaskRequest` | `TaskCreatedResponseDTO` (`Network\`, tarea worker) |

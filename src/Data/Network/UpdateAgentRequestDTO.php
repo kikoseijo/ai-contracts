@@ -21,7 +21,7 @@ use Sunnyface\Contracts\Data\Spoke\SpokeToolDefinitionDTO;
  * @param  array<int, string>  $vault_ids  IDs de bóvedas de conocimiento asignadas.
  * @param  DataCollection<int, SpokeToolDefinitionDTO>|null  $spoke_tools  Si es null, el Hub no altera las tools ya guardadas.
  */
-final class UpdateAgentConfigRequestDTO extends Data
+final class UpdateAgentRequestDTO extends Data
 {
     public function __construct(
         #[Required, Ulid]
@@ -30,6 +30,10 @@ final class UpdateAgentConfigRequestDTO extends Data
         public readonly string $name,
         #[Required, StringType, Max(1000)]
         public readonly string $greeting,
+        #[Nullable, Url, Max(2048)]
+        public readonly ?string $webhook_url = null,
+        #[Nullable, Ulid]
+        public readonly ?string $knowledge_vault_id = null,
         #[Required, StringType, Max(5000)]
         public readonly string $custom_instructions,
         /** @var array<int, string> */
@@ -37,5 +41,7 @@ final class UpdateAgentConfigRequestDTO extends Data
         public readonly array $vault_ids,
         #[DataCollectionOf(SpokeToolDefinitionDTO::class)]
         public readonly ?DataCollection $spoke_tools = null,
+        #[Nullable, StringType, Max(5000)]
+        public readonly ?string $system_prompt = null,
     ) {}
 }
