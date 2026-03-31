@@ -20,10 +20,16 @@
 | DELETE | `/vaults/{id}` | `VaultController@destroy` | `SpokeTenantIdRequest` | `NoContentResponseDTO` |
 | GET | `/vaults/{id}/documents` | `VaultController@documents` | `SpokeTenantIdRequest` | `VaultDocumentsResponseDTO` |
 | GET | `/vaults/{id}/metrics` | `VaultController@metrics` | `SpokeTenantIdRequest` | `VaultVectorMetricsResponseDTO` |
-| POST | `/vaults/{vault_id}/documents` | `VaultDocumentController@store` | `UploadDocumentRequest` | `VaultDocumentQueuedResponseDTO` |
+| POST | `/vaults/{vault_id}/documents` | `VaultDocumentController@store` | `UploadDocumentRequest` | `VaultDocumentQueuedResponseDTO` ⚠️ ver nota |
 | DELETE | `/vaults/{vault_id}/documents/{doc_id}` | `VaultDocumentController@destroy` | `SpokeTenantIdRequest` | `NoContentResponseDTO` |
 | POST | `/vaults/{vault_id}/documents/{doc_id}/reindex` | `VaultDocumentController@reindex` | `SpokeTenantIdRequest` | `VaultDocumentQueuedResponseDTO` |
 | POST | `/knowledge/ingest` | `KnowledgeController@ingest` | `IngestKnowledgeRequest` | `KnowledgeIngestQueuedResponseDTO` |
+
+> ⚠️ **Flujo correcto para ingesta con `task_id` garantizado (Rag/Classification):**
+> 1. `POST /vaults/{vault_id}/documents` → crea el `VaultDocument`, devuelve `document_id`. El campo `task_id` puede ser `null` para tipos Audio/Video/Extraction.
+> 2. `POST /knowledge/ingest` con `{ vault_document_id }` → encola el procesamiento, devuelve `task_id` **siempre presente** para hacer polling.
+>
+> **No uses el paso 1 para obtener `task_id`.** Usa `/knowledge/ingest` si necesitas rastrear el estado del procesamiento.
 | POST | `/agents/magic-draft` | `MagicDraftController` | `MagicDraftRequest` | `MagicDraftCreatedResponseDTO` |
 | GET | `/agents` | `AgentController@index` | `SpokeTenantIdRequest` | `AgentListResponseDTO` |
 | POST | `/agents` | `AgentController@store` | `CreateAgentRequest` | `AgentCreatedResponseDTO` |
