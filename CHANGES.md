@@ -73,7 +73,7 @@ Todos los cambios notables de este paquete se documentan en este archivo.
 
 ## 2026-03-24
 
-- **feat:** add strict DTOs and Enums for SunnyGestor SLA contract (`c055910`)
+- **feat:** add strict DTOs and Enums for SunnyTaz SLA contract (`c055910`)
 - **refactor:** clean up duplicated and unused DTOs across Network and Spoke/Responses (`1c40c89`)
 - **docs:** add HUB_ROUTE_MATRIX and HUB_SPOKE_HTTP_CONTRACT documentation (`f63bd5c`)
 - **feat:** add SyncAgentVaultsRequest for hot-swapping vaults (`d4b0094`)

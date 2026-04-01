@@ -111,7 +111,7 @@ Todos los webhooks asíncronos se envían a **`POST {spoke_url}/api/webhooks/hub
 | `billing.quota_sync` | `QuotaUpdatedWebhookDTO` | Reconciliación periódica de saldo |
 | `governance.insight_generated` | `GovernanceInsightWebhookDTO` | Insight de auditoría AIOps |
 
-**Nota:** `HubWebhookDTO`, `SunnyGestorWebhookDTO` y `TenantTaskCompletedWebhookDTO` siguen disponibles como DTOs internos para casos específicos de integración.
+**Nota:** `HubWebhookDTO`, `SunnyTazWebhookDTO` y `TenantTaskCompletedWebhookDTO` siguen disponibles como DTOs internos para casos específicos de integración.
 
 ---
 

@@ -2,7 +2,7 @@
 alwaysApply: true
 ---
 
-> 📚 **IMPORTANTE:** Si estás trabajando en un proyecto consumidor de este paquete (como `sunnyface` o `SunnyGestor`), **DEBES LEER Y APLICAR** la guía estricta de controladores y arquitectura C.O.R.E. ubicada en: `.cursor/skills/perfect-agent-guide/SKILL.md`
+> 📚 **IMPORTANTE:** Si estás trabajando en un proyecto consumidor de este paquete (como `sunnyface` o `SunnyTaz`), **DEBES LEER Y APLICAR** la guía estricta de controladores y arquitectura C.O.R.E. ubicada en: `.cursor/skills/perfect-agent-guide/SKILL.md`
 
 # [SYSTEM PROMPT] Directrices Arquitectónicas C.O.R.E. para ai-contracts
 
@@ -17,12 +17,14 @@ Tu código DEBE ser determinista, inmutable y estrictamente tipado bajo el frame
 NUNCA uses `DataCollection` ni el atributo `#[DataCollectionOf]`. Spatie Laravel Data v4 soporta arreglos nativos tipados mediante DocBlocks. Esto simplifica la hidratación y evita problemas de inmutabilidad.
 
 - **INCORRECTO:**
+
 ```php
   #[DataCollectionOf(AgentSummaryData::class)]
   public readonly ?DataCollection $agents = null;
 ```
 
 - **CORRECTO:**
+
 ```php
   /** @var array<int, AgentSummaryData>|null */
   public readonly ?array $agents = null;
@@ -50,7 +52,8 @@ Todo DTO en este paquete debe seguir esta estructura exacta:
 
 ### 5. Política de Versionado (SemVer Estricto)
 
-Cualquier cambio en la firma de un DTO (añadir, quitar o renombrar propiedades) DEBE seguir la política de versionado híbrida. 
+Cualquier cambio en la firma de un DTO (añadir, quitar o renombrar propiedades) DEBE seguir la política de versionado híbrida.
+
 - **NUNCA** hagas un Breaking Change sin planificar un salto de versión MAJOR.
 - **Lee la política completa en:** `docs/versioning-policy.md`
 

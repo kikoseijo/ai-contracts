@@ -10,7 +10,7 @@ Nunca exijas `"sunnyface/ai-contracts": "dev-main"` en los `composer.json` de pr
 
 ### 💻 Entorno Local (Desarrollo): Symlinks
 
-Para desarrollar con fluidez sin necesidad de hacer commits y tags constantemente, los proyectos consumidores (`sunnyface`, `SunnyGestor`) deben enlazar el paquete localmente:
+Para desarrollar con fluidez sin necesidad de hacer commits y tags constantemente, los proyectos consumidores (`sunnyface`, `SunnyTaz`) deben enlazar el paquete localmente:
 
 ```json
 // En el composer.json del consumidor (solo local)
