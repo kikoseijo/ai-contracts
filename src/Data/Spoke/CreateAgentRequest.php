@@ -24,5 +24,7 @@ class CreateAgentRequest extends Data
         #[Required]
         public readonly HandlerSlug $handler_slug,
         public readonly ?array $config = null,
+        #[Ulid]
+        public readonly ?string $knowledge_vault_id = null,
     ) {}
 }
