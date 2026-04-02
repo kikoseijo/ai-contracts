@@ -14,7 +14,7 @@ class ProvisionTenantRequest extends Data
     public function __construct(
         #[Required, Max(255)]
         public readonly string $company_name,
-        #[Ulid]
-        public readonly ?string $satelite_id = null,
+        #[Required, Ulid]
+        public readonly string $satelite_id,
     ) {}
 }
