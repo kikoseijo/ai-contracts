@@ -15,6 +15,6 @@ class ProvisionTenantRequest extends Data
         #[Required, Max(255)]
         public readonly string $company_name,
         #[Required, Ulid]
-        public readonly string $satelite_id,
+        public readonly string $satellite_id,
     ) {}
 }
