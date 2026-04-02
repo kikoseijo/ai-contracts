@@ -6,6 +6,7 @@ namespace Sunnyface\Contracts\Data\Spoke;
 
 use Spatie\LaravelData\Attributes\Validation\Max;
 use Spatie\LaravelData\Attributes\Validation\Required;
+use Spatie\LaravelData\Attributes\Validation\Ulid;
 use Spatie\LaravelData\Data;
 
 class ProvisionTenantRequest extends Data
@@ -13,5 +14,7 @@ class ProvisionTenantRequest extends Data
     public function __construct(
         #[Required, Max(255)]
         public readonly string $company_name,
+        #[Ulid]
+        public readonly ?string $satelite_id = null,
     ) {}
 }

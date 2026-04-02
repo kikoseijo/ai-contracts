@@ -4,6 +4,8 @@ Todos los cambios notables de este paquete se documentan en este archivo.
 
 ## [Unreleased]
 
+- **feat:** `ProvisionTenantRequest` añade campo opcional `satelite_id: ?string` — ULID local del Spoke para correlación Hub↔Spoke durante el aprovisionamiento (`pending`)
+
 - **feat:** `PendingValidationSource` enum — orígenes de validación pendiente (WhatsApp, Telegram, Zapier, OCR, Hub, etc.) con `label()`, `color()`, `icon()`.
 - **feat:** `PendingValidationStatus` enum — estados del ciclo de validación (Processing → Approved/Rejected/Resolved) con `isTerminal()`, `isActionable()`, `label()`, `color()`, `icon()`.
 - **feat:** `SpokeDocumentStatus` enum — estados de documento en satélite (Draft → Verified → Paid/Cancelled) con `label()`, `color()`, `icon()`.
