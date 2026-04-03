@@ -2,6 +2,12 @@
 
 Todos los cambios notables de este paquete se documentan en este archivo.
 
+## [1.2.6] — 2026-04-03
+
+- **feat:** `CreateAgentRequest` añade campo opcional `blueprint_id: ?string` — permite especificar un blueprint al crear un agente en el Hub; retrocompatible (Minor) (`fefc3b8`)
+- **chore:** cambio de distribución — paquete publicado en GitHub VCS (`kikoseijo/ai-contracts`) en lugar de path local; los satélites deben usar VCS repository en `composer.json` para producción
+- **infra:** SunnyTaz actualiza `composer.json` a `^1.2.6` usando VCS GitHub; baseline PHPStan regenerada; primer despliegue Hub↔Spoke en producción (`sunnytaz.com` → `matrix.sunnyface.com`)
+
 ## [Unreleased]
 
 - **feat:** `ProvisionTenantRequest` añade campo opcional `satelite_id: ?string` — ULID local del Spoke para correlación Hub↔Spoke durante el aprovisionamiento (`pending`)
