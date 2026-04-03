@@ -26,5 +26,6 @@ class CreateAgentRequest extends Data
         public readonly ?array $config = null,
         #[Ulid]
         public readonly ?string $knowledge_vault_id = null,
+        public readonly ?string $blueprint_id = null,
     ) {}
 }
