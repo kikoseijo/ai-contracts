@@ -1,6 +1,6 @@
 {
   "name": "sunnyface/ai-contracts",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "Contratos DTO y esquemas compartidos entre Hub y Spoke",
   "type": "library",
   "require": {
